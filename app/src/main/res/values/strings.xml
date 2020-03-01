@@ -8,6 +8,11 @@
     <string name="validate">Connexion</string>
     <string name="password_forget">Mot de passe oublié ?</string>
     <string name="new_account">Nouveau membre ?</string>
-    <string name="incorrect_username">Identifiant incorrect</string>
-    <string name="incorrect_password">Mot de passe incorrect</string>
+
+    <!-- Firebase -->
+    <string name="token">Token</string>
+    <string name="email">Email</string>
+    <string name="name">Nom</string>
+    <string name="phone">Téléphone</string>
+    <string name="register">M\'inscrire</string>
 </resources>
