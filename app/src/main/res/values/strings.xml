@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">MobileSecurity</string>
+    <string name="app_name">Mobile Security</string>
+
+    <!-- LoginActivity -->
+    <string name="cybersecurity_logo">Logo Cybersécurité</string>
+    <string name="username">Identifiant</string>
+    <string name="password">Mot de passe</string>
+    <string name="validate">Connexion</string>
+    <string name="password_forget">Mot de passe oublié ?</string>
+    <string name="new_account">Nouveau membre ?</string>
+    <string name="incorrect_username">Identifiant incorrect</string>
+    <string name="incorrect_password">Mot de passe incorrect</string>
 </resources>
