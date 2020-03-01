@@ -16,6 +16,7 @@ class LoginActivity : AppCompatActivity() {
         initLayout()
 
         btnNew.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
+        btnSend.setOnClickListener { startActivity(Intent(this, HomeActivity::class.java)) }
     }
 
     private fun initLayout() {
