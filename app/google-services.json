@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "109371619059",
+    "firebase_url": "https://mobilesecurity-43b79.firebaseio.com",
+    "project_id": "mobilesecurity-43b79",
+    "storage_bucket": "mobilesecurity-43b79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109371619059:android:2c0104ef3a13563d166986",
+        "android_client_info": {
+          "package_name": "fr.isen.guillaume.mobilesecurity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "109371619059-l3fa1ldfc6u9p2sm1r5ao6tpi81kmrtp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.isen.guillaume.mobilesecurity",
+            "certificate_hash": "e5943e3310e30e15d9a065d2a23e0957749414bf"
+          }
+        },
+        {
+          "client_id": "109371619059-vep6qh6254suupt9kgiiqg8q113uon5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlr5pmsRmY8t20nWq-pkIjYZ8ZqRDjl70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109371619059-vep6qh6254suupt9kgiiqg8q113uon5e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
