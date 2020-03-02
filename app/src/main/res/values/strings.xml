@@ -18,11 +18,11 @@
 
     <!-- HomeActivity -->
     <string name="my_dashboard">My Dashboard</string>
-    <string name="life_cycle">Cycle de vie</string>
-    <string name="backup">Sauvegarde</string>
-    <string name="permissions">Permissions</string>
-    <string name="webservices">Webservices</string>
-    <string name="agenda">Agenda</string>
-    <string name="firebase">Firebase</string>
+    <string name="patients">Patients</string>
+    <string name="old_patients">Historique</string>
+    <string name="visits">Visites</string>
+    <string name="mail">Messagerie</string>
+    <string name="tokens">Tokens</string>
+    <string name="settings">Paramètres</string>
     <string name="disconnection">Déconnexion</string>
 </resources>
