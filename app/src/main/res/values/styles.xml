@@ -8,4 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="StyleToastFail">
+        <item name="stTextBold">true</item>
+        <item name="stTextColor">#FFFFFF</item>
+        <item name="stColorBackground">#FDAF17</item>
+        <item name="stSolidBackground">true</item>
+        <item name="stIconStart">@drawable/ic_error_outline_24px</item>
+        <item name="stRadius">4dp</item>
+    </style>
+
+    <style name="StyleToastSuccess">
+        <item name="stTextBold">true</item>
+        <item name="stTextColor">#FFFFFF</item>
+        <item name="stColorBackground">#28B62C</item>
+        <item name="stSolidBackground">true</item>
+        <item name="stIconStart">@drawable/ic_done_24px</item>
+        <item name="stRadius">4dp</item>
+    </style>
+
 </resources>
