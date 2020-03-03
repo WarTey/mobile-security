@@ -8,6 +8,8 @@
     <string name="validate">Connexion</string>
     <string name="password_forget">Mot de passe oublié ?</string>
     <string name="new_account">Nouveau membre ?</string>
+    <string name="connection_error_message">Votre email et/ou mot de passe sont incorrects</string>
+    <string name="empty_input">Veuillez remplir ce champ</string>
 
     <!-- RegisterActivity -->
     <string name="token">Token</string>
@@ -17,7 +19,6 @@
     <string name="register">M\'inscrire</string>
     <string name="incorrect_email">Email incorrect</string>
     <string name="too_short_password">Mot de passe trop court</string>
-    <string name="incorrect_name">Nom incorrect</string>
     <string name="incorrect_token">Token incorrect</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="register_error">Erreur lors de l\'inscription</string>

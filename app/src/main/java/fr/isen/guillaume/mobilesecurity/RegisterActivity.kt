@@ -26,6 +26,7 @@ class RegisterActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(txtName.text.toString()).build()
                     firebaseAuth.currentUser?.updateProfile(userProfileChangeRequest)
+                    firebaseAuth.signOut()
                     goToLogin()
                 } else
                     viewRegisterError()
@@ -58,10 +59,10 @@ class RegisterActivity : AppCompatActivity() {
         resetInputError()
 
         if (txtToken.text.isNullOrEmpty())
-            inputName.error = getString(R.string.incorrect_name)
+            inputName.error = getString(R.string.incorrect_token)
 
         if (txtName.text.isNullOrEmpty())
-            inputName.error = getString(R.string.incorrect_token)
+            inputName.error = getString(R.string.empty_input)
 
         if (!isEmail())
             inputUsername.error = getString(R.string.incorrect_email)
