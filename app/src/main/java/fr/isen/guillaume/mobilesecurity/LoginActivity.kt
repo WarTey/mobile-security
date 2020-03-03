@@ -35,10 +35,15 @@ class LoginActivity : AppCompatActivity() {
 
     private fun login() {
         if (!isEmptyInput()) {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(txtUsername.text.toString(), txtPassword.text.toString()).addOnCompleteListener(this) {
-                if (it.isSuccessful)
-                    goToHome()
-                else
+            val firebaseAuth = FirebaseAuth.getInstance()
+            firebaseAuth.signInWithEmailAndPassword(txtUsername.text.toString(), txtPassword.text.toString()).addOnCompleteListener(this) {
+                if (it.isSuccessful) {
+                    val isEmailVerified = firebaseAuth.currentUser?.isEmailVerified
+                    if (isEmailVerified != null && isEmailVerified)
+                        goToHome()
+                    else
+                        viewEmailCheckError()
+                } else
                     viewLoginError()
             }
         } else
@@ -57,6 +62,11 @@ class LoginActivity : AppCompatActivity() {
     private fun viewLoginError() {
         resetInputError()
         StyleableToast.makeText(this, getString(R.string.connection_error_message), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+    }
+
+    private fun viewEmailCheckError() {
+        resetInputError()
+        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
     }
 
     private fun viewBadInput() {
