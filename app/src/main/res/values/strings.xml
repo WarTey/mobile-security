@@ -23,6 +23,7 @@
     <string name="incorrect_token">Token incorrect</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="register_error">Erreur lors de l\'inscription</string>
+    <string name="check_email">Veuillez vérifier vos emails</string>
 
     <!-- HomeActivity -->
     <string name="my_dashboard">My Dashboard</string>

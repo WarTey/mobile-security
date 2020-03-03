@@ -28,6 +28,7 @@ class RegisterActivity : AppCompatActivity() {
                     firebaseAuth.currentUser?.updateProfile(userProfileChangeRequest)
                     firebaseAuth.signOut()
                     goToLogin()
+                    verifyEmail(firebaseAuth)
                 } else
                     viewRegisterError()
             }
@@ -77,6 +78,11 @@ class RegisterActivity : AppCompatActivity() {
     private fun viewRegisterError() {
         resetInputError()
         StyleableToast.makeText(this, getString(R.string.register_error), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+    }
+
+    private fun verifyEmail(firebaseAuth: FirebaseAuth) {
+        firebaseAuth.currentUser?.sendEmailVerification()
+        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
     }
 
     private fun goToLogin() {
