@@ -15,6 +15,7 @@ class HomeActivity : AppCompatActivity() {
         animCard()
 
         materialCardPatients.setOnClickListener { startActivity(Intent(this, PatientsActivity::class.java)) }
+        materialCardVisits.setOnClickListener { startActivity(Intent(this, VisitsActivity::class.java)) }
     }
 
     private fun animCard() {

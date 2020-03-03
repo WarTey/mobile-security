@@ -34,4 +34,8 @@
     <string name="day_actions">Actions du jour</string>
     <string name="add_patient">Ajout d\'un patient</string>
     <string name="create">Créer</string>
+
+    <!-- VisitsActivity -->
+    <string name="me">Moi</string>
+    <string name="all">Tout le monde</string>
 </resources>
