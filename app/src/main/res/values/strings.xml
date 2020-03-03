@@ -10,6 +10,7 @@
     <string name="new_account">Nouveau membre ?</string>
     <string name="connection_error_message">Votre email et/ou mot de passe sont incorrects</string>
     <string name="empty_input">Veuillez remplir ce champ</string>
+    <string name="email_sent">Email envoyé</string>
 
     <!-- RegisterActivity -->
     <string name="token">Token</string>

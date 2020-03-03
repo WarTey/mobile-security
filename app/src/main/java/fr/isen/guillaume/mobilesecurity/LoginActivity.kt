@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
         initLayout()
 
         btnNew.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
+        btnForget.setOnClickListener { forgetPassword() }
         btnSend.setOnClickListener { login() }
     }
 
@@ -66,6 +67,19 @@ class LoginActivity : AppCompatActivity() {
 
         if (txtPassword.text.isNullOrEmpty())
             inputPassword.error = getString(R.string.empty_input)
+    }
+
+    private fun forgetPassword() {
+        if (txtUsername.text.isNullOrEmpty())
+            inputUsername.error = getString(R.string.empty_input)
+        else {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(txtUsername.text.toString()).addOnCompleteListener(this) {
+                if (it.isSuccessful)
+                    StyleableToast.makeText(this, getString(R.string.email_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+                else
+                    StyleableToast.makeText(this, getString(R.string.incorrect_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+            }
+        }
     }
 
     private fun goToHome() {
