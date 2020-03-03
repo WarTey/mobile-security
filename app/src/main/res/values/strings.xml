@@ -38,4 +38,8 @@
     <!-- VisitsActivity -->
     <string name="me">Moi</string>
     <string name="all">Tout le monde</string>
+
+    <!-- AddVisitActivity -->
+    <string name="add_visit">Ajout d\'une visite</string>
+    <string name="date">Date</string>
 </resources>

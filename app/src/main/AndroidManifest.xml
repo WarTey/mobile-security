@@ -11,7 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".VisitsActivity"></activity>
+        <activity android:name=".AddVisitActivity"></activity>
+        <activity android:name=".VisitsActivity" />
         <activity android:name=".AddPatientActivity" />
         <activity android:name=".PatientsActivity" />
         <activity android:name=".HomeActivity" />
