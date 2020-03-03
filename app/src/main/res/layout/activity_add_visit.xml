@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".AddVisitActivity">
 
+    <me.ibrahimsn.particle.ParticleView
+        android:id="@+id/particleRegister"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:backgroundColor="@android:color/white"
+        app:maxParticleRadius="3"
+        app:minParticleRadius="3"
+        app:particleColor="@color/colorPrimary"
+        app:particleCount="8" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutHeader"
         android:layout_width="match_parent"

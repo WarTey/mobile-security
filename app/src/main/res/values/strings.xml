@@ -15,6 +15,12 @@
     <string name="name">Nom</string>
     <string name="phone">Téléphone</string>
     <string name="register">M\'inscrire</string>
+    <string name="incorrect_email">Email incorrect</string>
+    <string name="too_short_password">Mot de passe trop court</string>
+    <string name="incorrect_name">Nom incorrect</string>
+    <string name="incorrect_token">Token incorrect</string>
+    <string name="incorrect_password">Mot de passe incorrect</string>
+    <string name="register_error">Erreur lors de l\'inscription</string>
 
     <!-- HomeActivity -->
     <string name="my_dashboard">My Dashboard</string>
