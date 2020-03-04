@@ -6,8 +6,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 import com.muddzdev.styleabletoast.StyleableToast
+import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_register.*
+import java.security.KeyPairGenerator
+import java.util.*
 import java.util.regex.Pattern
 
 class RegisterActivity : AppCompatActivity() {
@@ -29,9 +33,7 @@ class RegisterActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(txtName.text.toString()).build()
                     firebaseAuth.currentUser?.updateProfile(userProfileChangeRequest)
-                    verifyEmail(firebaseAuth)
-                    firebaseAuth.signOut()
-                    goToLogin()
+                    sendRequest(firebaseAuth)
                 } else
                     viewRegisterError()
             }
@@ -52,7 +54,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun resetInputError() {
-        inputToken.error = null
         inputName.error = null
         inputUsername.error = null
         inputPassword.error = null
@@ -61,9 +62,6 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun viewBadInput() {
         resetInputError()
-
-        if (txtToken.text.isNullOrEmpty())
-            inputName.error = getString(R.string.incorrect_token)
 
         if (txtName.text.isNullOrEmpty())
             inputName.error = getString(R.string.empty_input)
@@ -83,9 +81,23 @@ class RegisterActivity : AppCompatActivity() {
         StyleableToast.makeText(this, getString(R.string.register_error), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
     }
 
-    private fun verifyEmail(firebaseAuth: FirebaseAuth) {
-        firebaseAuth.currentUser?.sendEmailVerification()
-        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+    private fun sendRequest(firebaseAuth: FirebaseAuth) {
+        val firestore = FirebaseFirestore.getInstance()
+        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyPairGenerator.initialize(3072)
+
+        val pendingRef = firestore.collection("pending").document()
+        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Arrays.toString(keyPairGenerator.genKeyPair().private.encoded), "InProgress") }
+
+        pending?.let {
+            pendingRef.set(it).addOnSuccessListener {
+                StyleableToast.makeText(this, getString(R.string.registration_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+                firebaseAuth.signOut()
+                goToLogin()
+            }.addOnFailureListener {
+                StyleableToast.makeText(this, getString(R.string.registration_not_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+            }
+        }
     }
 
     private fun goToLogin() {

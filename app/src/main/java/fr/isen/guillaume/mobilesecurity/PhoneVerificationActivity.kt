@@ -27,7 +27,7 @@ class PhoneVerificationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_phone_verification)
 
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser == null) goToLogin()
+        if (firebaseUser == null || !firebaseUser.isEmailVerified) goToLogin()
 
         if (!firebaseUser?.phoneNumber.isNullOrEmpty()) {
             changeDisplay()

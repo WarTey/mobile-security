@@ -14,7 +14,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser != null && intent.getBooleanExtra("phone", false)) txtUsername.text = firebaseUser.displayName
+        if (firebaseUser != null && firebaseUser.isEmailVerified && intent.getBooleanExtra("phone", false)) txtUsername.text = firebaseUser.displayName
         else goToLogin()
 
         animCard()

@@ -7,6 +7,8 @@ import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -17,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null) goToPhone()
+        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true) goToPhone()
 
         initLayout()
 
@@ -42,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
                     if (isEmailVerified != null && isEmailVerified)
                         goToPhone()
                     else
-                        viewEmailCheckError()
+                        viewEmailCheckError(firebaseAuth)
                 } else
                     viewLoginError()
             }
@@ -64,9 +66,29 @@ class LoginActivity : AppCompatActivity() {
         StyleableToast.makeText(this, getString(R.string.connection_error_message), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
     }
 
-    private fun viewEmailCheckError() {
+    private fun verifyEmail(firebaseAuth: FirebaseAuth) {
+        firebaseAuth.currentUser?.sendEmailVerification()
+        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+    }
+
+    private fun viewEmailCheckError(firebaseAuth: FirebaseAuth) {
         resetInputError()
-        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+        val firestore = FirebaseFirestore.getInstance()
+        val pendingRef = firestore.collection("pending")
+        val pendingQuery = pendingRef.whereEqualTo("email", firebaseAuth.currentUser?.email).orderBy("status", Query.Direction.ASCENDING)
+
+        pendingQuery.get().addOnSuccessListener {
+            for (document in it) {
+                if (document.data["status"] == "InProgress")
+                    StyleableToast.makeText(this, getString(R.string.error_status), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+                else if (document.data["status"] == "Valid") {
+                    verifyEmail(firebaseAuth)
+                    StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+                }
+            }
+        }.addOnFailureListener {
+            StyleableToast.makeText(this, getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+        }
     }
 
     private fun viewBadInput() {
