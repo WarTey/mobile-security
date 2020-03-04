@@ -26,9 +26,10 @@ class RegisterActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(txtName.text.toString()).build()
                     firebaseAuth.currentUser?.updateProfile(userProfileChangeRequest)
+                    verifyEmail(firebaseAuth)
                     firebaseAuth.signOut()
                     goToLogin()
-                    verifyEmail(firebaseAuth)
+
                 } else
                     viewRegisterError()
             }
