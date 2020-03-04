@@ -51,4 +51,14 @@
     <!-- AddVisitActivity -->
     <string name="add_visit">Ajout d\'une visite</string>
     <string name="date">Date</string>
+
+    <!-- PhoneVerificationActivity -->
+    <string name="send_code">Envoyer le code</string>
+    <string name="next">Continuer</string>
+    <string name="no_code">Pas de code ?</string>
+    <string name="code_error">Le code est incorrect</string>
+    <string name="not_phone_number">Numéro de téléphone incorrect</string>
+    <string name="code_sent">Code envoyé</string>
+    <string name="code_pending">Code en cours d\'envoie</string>
+    <string name="code_failed">Envoie du code échoué</string>
 </resources>

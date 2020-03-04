@@ -16,8 +16,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val auth = FirebaseAuth.getInstance()
-        if (auth.currentUser != null) goToHome()
+        val firebaseAuth = FirebaseAuth.getInstance()
+        if (firebaseAuth.currentUser != null) goToPhone()
 
         initLayout()
 
@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val isEmailVerified = firebaseAuth.currentUser?.isEmailVerified
                     if (isEmailVerified != null && isEmailVerified)
-                        goToHome()
+                        goToPhone()
                     else
                         viewEmailCheckError()
                 } else
@@ -92,10 +92,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToHome() {
-        val intentHome = Intent(this, HomeActivity::class.java)
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentHome)
+    private fun goToPhone() {
+        val intentPhone = Intent(this, PhoneVerificationActivity::class.java)
+        intentPhone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intentPhone)
         finish()
     }
 }

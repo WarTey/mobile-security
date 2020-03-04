@@ -14,7 +14,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser != null) txtUsername.text = firebaseUser.displayName
+        if (firebaseUser != null && intent.getBooleanExtra("phone", false)) txtUsername.text = firebaseUser.displayName
         else goToLogin()
 
         animCard()
@@ -38,6 +38,13 @@ class HomeActivity : AppCompatActivity() {
         val intentLogin = Intent(this, LoginActivity::class.java)
         intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intentLogin)
+        finish()
+    }
+
+    private fun goToPhone() {
+        val intentPhone = Intent(this, PhoneVerificationActivity::class.java)
+        intentPhone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intentPhone)
         finish()
     }
 

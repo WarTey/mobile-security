@@ -16,6 +16,9 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        val firebaseAuth = FirebaseAuth.getInstance()
+        if (firebaseAuth.currentUser != null) goToLogin()
+
         btnRegister.setOnClickListener { register() }
     }
 
@@ -26,9 +29,9 @@ class RegisterActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(txtName.text.toString()).build()
                     firebaseAuth.currentUser?.updateProfile(userProfileChangeRequest)
+                    verifyEmail(firebaseAuth)
                     firebaseAuth.signOut()
                     goToLogin()
-                    verifyEmail(firebaseAuth)
                 } else
                     viewRegisterError()
             }
@@ -82,7 +85,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun verifyEmail(firebaseAuth: FirebaseAuth) {
         firebaseAuth.currentUser?.sendEmailVerification()
-        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
     }
 
     private fun goToLogin() {
