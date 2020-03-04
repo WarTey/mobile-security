@@ -18,6 +18,40 @@ class PatientsAdapter(private val items: ArrayList<Patient>, private val context
         return items.size
     }
 
+    fun updateItems(items: ArrayList<Patient>) {
+        this.items.clear()
+        this.items.addAll(items)
+    }
+
+    fun addItem(item: Patient?) {
+        if (item != null)
+            items.add(item)
+    }
+
+    fun addItems(items: ArrayList<Patient>) {
+        this.items.addAll(items)
+    }
+
+    fun changeItem(item: Patient?) {
+        if (item != null) {
+            items.forEachIndexed { index, visit ->
+                if (visit.id == item.id) {
+                    items[index] = item
+                    return
+                }
+            }
+        }
+    }
+
+    fun removeItem(id: String) {
+        items.forEachIndexed { index, visit ->
+            if (visit.id == id) {
+                items.removeAt(index)
+                return
+            }
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(context).inflate(R.layout.recyclerview_patients, parent, false)

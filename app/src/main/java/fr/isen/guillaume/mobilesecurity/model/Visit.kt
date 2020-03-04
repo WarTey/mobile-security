@@ -12,4 +12,9 @@ class Visit() {
         visitor = pVisitor
         actions = pActions
     }
+
+    fun setIdAnd(pId: String): Visit {
+        id = pId
+        return this
+    }
 }
