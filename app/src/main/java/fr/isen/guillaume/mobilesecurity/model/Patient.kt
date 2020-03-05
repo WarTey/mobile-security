@@ -19,4 +19,24 @@ class Patient() {
         id = pId
         return this
     }
+
+    fun toMap(): HashMap<String, Comparable<*>?> {
+        return hashMapOf(
+            "firstname" to firstname,
+            "lastname" to lastname,
+            "picture" to picture
+        )
+    }
+
+    companion object {
+        fun isValid(map: HashMap<String, Comparable<*>?>?): Boolean {
+            if (map == null)
+                return false
+            return checkField(map["firstname"]) && checkField(map["lastname"] != null)
+        }
+
+        private fun checkField(field: Comparable<*>?): Boolean {
+            return field != null && field != ""
+        }
+    }
 }
