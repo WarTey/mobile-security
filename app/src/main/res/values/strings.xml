@@ -65,10 +65,14 @@
     <string name="code_sent">Code envoyé</string>
     <string name="code_pending">Code en cours d\'envoie</string>
     <string name="code_failed">Envoie du code échoué</string>
+    <string name="back">Retour</string>
 
     <!-- SettingsActivity -->
     <string name="reset_password">Réinitialiser mon mot de passe</string>
     <string name="pending_register">Inscriptions en attentes</string>
     <string name="activate_pin">Activer le Fingerprint</string>
     <string name="error">Erreur lors de l\'envoie du mail</string>
+    <string name="accept_user">Sélectionnez un utilisateur à approuver</string>
+    <string name="registration_accepted">Inscription acceptée</string>
+    <string name="remove_register">Suppression utilisateurs</string>
 </resources>

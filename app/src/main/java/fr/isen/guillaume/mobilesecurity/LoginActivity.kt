@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -19,7 +20,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true) goToPhone()
+        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true)
+            checkPending(firebaseAuth)
 
         initLayout()
 
@@ -42,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val isEmailVerified = firebaseAuth.currentUser?.isEmailVerified
                     if (isEmailVerified != null && isEmailVerified)
-                        goToPhone()
+                        checkPending(firebaseAuth)
                     else
                         viewEmailCheckError(firebaseAuth)
                 } else
@@ -74,20 +76,27 @@ class LoginActivity : AppCompatActivity() {
     private fun viewEmailCheckError(firebaseAuth: FirebaseAuth) {
         resetInputError()
         val firestore = FirebaseFirestore.getInstance()
-        val pendingRef = firestore.collection("pending")
-        val pendingQuery = pendingRef.whereEqualTo("email", firebaseAuth.currentUser?.email).orderBy("status", Query.Direction.ASCENDING)
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
 
-        pendingQuery.get().addOnSuccessListener {
-            for (document in it) {
-                if (document.data["status"] == "InProgress")
-                    StyleableToast.makeText(this, getString(R.string.error_status), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
-                else if (document.data["status"] == "Valid") {
-                    verifyEmail(firebaseAuth)
-                    StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
-                }
+        pendingRef?.get()?.addOnSuccessListener {
+            if (it.data?.get("status") == "InProgress")
+                StyleableToast.makeText(this, getString(R.string.error_status), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+            else if (it.data?.get("status") == "user" || it.data?.get("status") == "admin") {
+                verifyEmail(firebaseAuth)
+                StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
             }
-        }.addOnFailureListener {
+        }?.addOnFailureListener {
             StyleableToast.makeText(this, getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+        }
+    }
+
+    private fun checkPending(firebaseAuth: FirebaseAuth) {
+        val firestore = FirebaseFirestore.getInstance()
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
+
+        pendingRef?.get()?.addOnSuccessListener {
+            if (it.data?.get("status").toString() != "InProgress")
+                goToPhone()
         }
     }
 

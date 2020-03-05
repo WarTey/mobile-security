@@ -1,9 +1,12 @@
 package fr.isen.guillaume.mobilesecurity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -13,8 +16,23 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        btnPassword.setOnClickListener { forgetPassword() }
+        setView()
 
+        btnPassword.setOnClickListener { forgetPassword() }
+        btnRegister.setOnClickListener { startActivity(Intent(this, PendingModeActivity::class.java)) }
+        btnRemove.setOnClickListener { startActivity(Intent(this, RemoveUsersActivity::class.java)) }
+    }
+
+    private fun setView() {
+        val firestore = FirebaseFirestore.getInstance()
+        val pendingRef = FirebaseAuth.getInstance().currentUser?.email?.let { firestore.collection("pending").document(it) }
+
+        pendingRef?.get()?.addOnSuccessListener {
+            if (it.data?.get("status").toString() == "admin") {
+                btnRegister.visibility = View.VISIBLE
+                btnRemove.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun forgetPassword() {

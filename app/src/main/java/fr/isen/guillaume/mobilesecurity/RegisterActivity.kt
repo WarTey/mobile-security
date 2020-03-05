@@ -86,15 +86,15 @@ class RegisterActivity : AppCompatActivity() {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(3072)
 
-        val pendingRef = firestore.collection("pending").document()
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
         val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Arrays.toString(keyPairGenerator.genKeyPair().private.encoded), "InProgress") }
 
         pending?.let {
-            pendingRef.set(it).addOnSuccessListener {
+            pendingRef?.set(it)?.addOnSuccessListener {
                 StyleableToast.makeText(this, getString(R.string.registration_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
                 firebaseAuth.signOut()
                 goToLogin()
-            }.addOnFailureListener {
+            }?.addOnFailureListener {
                 StyleableToast.makeText(this, getString(R.string.registration_not_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
             }
         }

@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.FirebaseException
@@ -12,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.android.synthetic.main.activity_phone_verification.*
 import kotlinx.android.synthetic.main.activity_phone_verification.btnSend
@@ -27,7 +27,8 @@ class PhoneVerificationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_phone_verification)
 
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser == null || !firebaseUser.isEmailVerified) goToLogin()
+        if (firebaseUser == null || !firebaseUser.isEmailVerified)
+            checkPending(FirebaseAuth.getInstance())
 
         if (!firebaseUser?.phoneNumber.isNullOrEmpty()) {
             changeDisplay()
@@ -36,6 +37,15 @@ class PhoneVerificationActivity : AppCompatActivity() {
             btnSend.setOnClickListener { sendCode(firebaseUser) }
         btnNoCode.setOnClickListener { drawPhone(firebaseUser) }
         btnContinue.setOnClickListener { verifCode() }
+        btnBack.setOnClickListener { leave() }
+    }
+
+    private fun leave() {
+        FirebaseAuth.getInstance().signOut()
+        val intentLogin = Intent(this, LoginActivity::class.java)
+        intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intentLogin)
+        finish()
     }
 
     private fun changeDisplay() {
@@ -113,6 +123,16 @@ class PhoneVerificationActivity : AppCompatActivity() {
 
     private fun showPhoneError() {
         inputPhone.error = getString(R.string.not_phone_number)
+    }
+
+    private fun checkPending(firebaseAuth: FirebaseAuth) {
+        val firestore = FirebaseFirestore.getInstance()
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
+
+        pendingRef?.get()?.addOnSuccessListener {
+            if (it.data?.get("status").toString() != "InProgress")
+                goToLogin()
+        }
     }
 
     private fun goToLogin() {
