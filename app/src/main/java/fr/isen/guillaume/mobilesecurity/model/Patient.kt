@@ -9,13 +9,15 @@ class Patient() {
     var firstname: String? = null
     var lastname: String? = null
     var picture: Uri? = null
+    //var visits = ArrayList<Visit>()
 
-    constructor(pId: String, pReference: String, pFirstname: String, pLastname: String, pPicture: Uri?) : this() {
+    constructor(pId: String, pReference: String, pFirstname: String, pLastname: String, pPicture: Uri?/*, pVisits: ArrayList<Visit>*/) : this() {
         id = pId
         reference = pReference
         firstname = pFirstname
         lastname = pLastname
         picture = pPicture
+        //visits.addAll(pVisits)
     }
 
     fun setIdAnd(pId: String): Patient {

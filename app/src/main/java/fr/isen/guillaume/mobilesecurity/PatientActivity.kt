@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import fr.isen.guillaume.mobilesecurity.model.Patient
@@ -39,6 +38,17 @@ class PatientActivity : AppCompatActivity() {
         if (patientReference == null)
             exitActivity()
 
+        adapter = VisitsAdapter(ArrayList(), this)
+
+        visitsRecycler.layoutManager = LinearLayoutManager(this)
+        visitsRecycler.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+        visitsRecycler.adapter = adapter
+
         // Database reference and general query
         db = FirebaseFirestore.getInstance()
         db.collection("patients").whereEqualTo("reference", patientReference).get()
@@ -60,10 +70,9 @@ class PatientActivity : AppCompatActivity() {
                             resources.getString(R.string.patient_reference, patient.reference)
 
 
-                        /*visitsQuery = db.collection("visits")
-                            .whereEqualTo("patient", it.documents.first().reference)
-                            .orderBy("millis", Query.Direction.DESCENDING)*/
-                        visitsQuery = db.collection("visits").whereEqualTo("patient", db.collection("patients").document(it.documents.first().id)).limit(10)
+                        visitsQuery = db.collection("visits")
+                            .whereEqualTo("patient.reference", p.reference)
+                            .orderBy("millis", Query.Direction.DESCENDING)
                         updateVisits()
 
                         return@addOnSuccessListener
@@ -74,20 +83,6 @@ class PatientActivity : AppCompatActivity() {
                 Toast.makeText(this, "Erreur BDD", Toast.LENGTH_SHORT).show()
                 exitActivity()
             }
-
-        adapter = VisitsAdapter(ArrayList(), this)
-
-        visitsRecycler.layoutManager = LinearLayoutManager(this)
-        visitsRecycler.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-        visitsRecycler.adapter = adapter
-
-        // Load visits
-        //updateVisits()
 
         // FAB add visit
         floatingButtonVisit.setOnClickListener {
@@ -108,8 +103,6 @@ class PatientActivity : AppCompatActivity() {
                 endLoading()
                 return@addOnSuccessListener
             }
-
-            Log.d("OUPS", ""+it.size())
 
             it.map { doc -> doc.toObject(Visit::class.java).setIdAnd(doc.id) }.let { items ->
                 adapter.addItems(ArrayList(items))

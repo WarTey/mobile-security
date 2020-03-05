@@ -7,13 +7,15 @@ class Visit() {
     var millis: Long? = null
     var actions: String? = null
 
-    lateinit var visitor: DocumentReference
-    lateinit var patient: DocumentReference
+    var patient = HashMap<String, String>()
+    var visitor = HashMap<String, String>()
 
-    constructor(pId: String, pMillis: Long, pActions: String) : this() {
+    constructor(pId: String, pMillis: Long, pActions: String, pPatient: HashMap<String, String>, pVisitor: HashMap<String, String>) : this() {
         id = pId
         millis = pMillis
         actions = pActions
+        patient.putAll(pPatient)
+        visitor.putAll(pVisitor)
     }
 
     fun setIdAnd(pId: String): Visit {

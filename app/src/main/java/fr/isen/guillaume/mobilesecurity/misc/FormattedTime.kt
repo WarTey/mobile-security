@@ -18,6 +18,10 @@ class FormattedTime {
             return SimpleDateFormat("yyyy", Locale.FRENCH).format(millis)
         }
 
+        fun dayMonthYear(millis: Long?): String {
+            return SimpleDateFormat("dd/MM/yyyy", Locale.FRENCH).format(millis)
+        }
+
         fun parse(dateStr: String): Long {
             return 0L
         }

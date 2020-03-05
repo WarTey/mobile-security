@@ -8,6 +8,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import fr.isen.guillaume.mobilesecurity.model.Patient
 import kotlinx.android.synthetic.main.activity_add_patient.*
+import java.util.*
+
 
 class AddPatientActivity : AppCompatActivity() {
 
