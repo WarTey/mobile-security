@@ -21,6 +21,8 @@ class HomeActivity : AppCompatActivity() {
 
         materialCardPatients.setOnClickListener { startActivity(Intent(this, PatientsActivity::class.java)) }
         materialCardVisits.setOnClickListener { startActivity(Intent(this, VisitsActivity::class.java)) }
+        materialOldPatients.setOnClickListener { startActivity(Intent(this, PatientActivity::class.java).putExtra("reference", "Fontes")) } // DEBUG
+
         btnLogout.setOnClickListener { logout() }
     }
 

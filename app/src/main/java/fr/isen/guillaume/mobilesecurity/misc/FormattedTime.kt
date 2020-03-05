@@ -17,5 +17,9 @@ class FormattedTime {
         fun year(millis: Long?): String {
             return SimpleDateFormat("yyyy", Locale.FRENCH).format(millis)
         }
+
+        fun parse(dateStr: String): Long {
+            return 0L
+        }
     }
 }

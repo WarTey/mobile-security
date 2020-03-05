@@ -4,12 +4,15 @@ import android.net.Uri
 
 class Patient() {
     var id: String? = null
+
+    var reference: String? = null
     var firstname: String? = null
     var lastname: String? = null
     var picture: Uri? = null
 
-    constructor(pId: String, pFirstname: String, pLastname: String, pPicture: Uri?) : this() {
+    constructor(pId: String, pReference: String, pFirstname: String, pLastname: String, pPicture: Uri?) : this() {
         id = pId
+        reference = pReference
         firstname = pFirstname
         lastname = pLastname
         picture = pPicture
@@ -22,6 +25,7 @@ class Patient() {
 
     fun toMap(): HashMap<String, Comparable<*>?> {
         return hashMapOf(
+            "reference" to reference,
             "firstname" to firstname,
             "lastname" to lastname,
             "picture" to picture
@@ -32,7 +36,7 @@ class Patient() {
         fun isValid(map: HashMap<String, Comparable<*>?>?): Boolean {
             if (map == null)
                 return false
-            return checkField(map["firstname"]) && checkField(map["lastname"] != null)
+            return checkField(map["reference"]) && checkField(map["firstname"]) && checkField(map["lastname"] != null)
         }
 
         private fun checkField(field: Comparable<*>?): Boolean {

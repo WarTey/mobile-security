@@ -66,7 +66,7 @@ class VisitsAdapter(private var items: ArrayList<Visit>, private val context: Co
         holder.txtDate.text = FormattedTime.dayMonth(p.millis)
         holder.txtYear.text = FormattedTime.year(p.millis)
 
-        holder.txtVisitor.text = p.visitor?.name
+        holder.txtVisitor.text = p.patient.
         holder.txtActions.text = p.actions
     }
 
