@@ -35,6 +35,13 @@
     <string name="settings">Paramètres</string>
     <string name="disconnection">Déconnexion</string>
 
+    <!-- PatientActivity -->
+    <string name="patient">Patient</string>
+    <string name="patient_firstname">Prénom : %1$s</string>
+    <string name="patient_lastname">Nom : %1$s</string>
+    <string name="patient_reference">Référence : %1$s</string>
+    <string name="patient_historique">Historique des visites</string>
+
     <!-- AddPatientActivity -->
     <string name="firstname">Prénom</string>
     <string name="lastname">Nom</string>
