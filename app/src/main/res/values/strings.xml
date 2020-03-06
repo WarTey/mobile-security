@@ -1,3 +1,61 @@
 <resources>
-    <string name="app_name">MobileSecurity</string>
+    <string name="app_name">Mobile Security</string>
+
+    <!-- LoginActivity -->
+    <string name="cybersecurity_logo">Logo Cybersécurité</string>
+    <string name="username">Identifiant</string>
+    <string name="password">Mot de passe</string>
+    <string name="validate">Connexion</string>
+    <string name="password_forget">Mot de passe oublié ?</string>
+    <string name="new_account">Nouveau membre ?</string>
+    <string name="connection_error_message">Votre email et/ou mot de passe sont incorrects</string>
+    <string name="empty_input">Veuillez remplir ce champ</string>
+    <string name="email_sent">Email envoyé</string>
+
+    <!-- RegisterActivity -->
+    <string name="token">Token</string>
+    <string name="email">Email</string>
+    <string name="name">Nom</string>
+    <string name="phone">Téléphone</string>
+    <string name="register">M\'inscrire</string>
+    <string name="incorrect_email">Email incorrect</string>
+    <string name="too_short_password">Mot de passe trop court</string>
+    <string name="incorrect_token">Token incorrect</string>
+    <string name="incorrect_password">Mot de passe incorrect</string>
+    <string name="register_error">Erreur lors de l\'inscription</string>
+    <string name="check_email">Veuillez vérifier vos emails</string>
+
+    <!-- HomeActivity -->
+    <string name="my_dashboard">My Dashboard</string>
+    <string name="patients">Patients</string>
+    <string name="old_patients">Historique</string>
+    <string name="visits">Visites</string>
+    <string name="mail">Messagerie</string>
+    <string name="tokens">Tokens</string>
+    <string name="settings">Paramètres</string>
+    <string name="disconnection">Déconnexion</string>
+
+    <!-- PatientActivity -->
+    <string name="patient">Patient</string>
+    <string name="patient_firstname">Prénom : %1$s</string>
+    <string name="patient_lastname">Nom : %1$s</string>
+    <string name="patient_reference">Référence : %1$s</string>
+    <string name="patient_historique">Historique des visites</string>
+
+    <!-- AddPatientActivity -->
+    <string name="firstname">Prénom</string>
+    <string name="lastname">Nom</string>
+    <string name="pathology">Pathologie</string>
+    <string name="treatment">Traitement</string>
+    <string name="day_actions">Actions du jour</string>
+    <string name="add_patient">Ajout d\'un patient</string>
+    <string name="create">Créer</string>
+
+    <!-- VisitsActivity -->
+    <string name="me">Moi</string>
+    <string name="all">Tout le monde</string>
+
+    <!-- AddVisitActivity -->
+    <string name="add_visit">Ajout d\'une visite</string>
+    <string name="date">Date</string>
 </resources>

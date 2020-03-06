@@ -11,7 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity android:name=".PatientActivity"></activity>
+        <activity android:name=".AddVisitActivity" />
+        <activity android:name=".VisitsActivity" />
+        <activity android:name=".AddPatientActivity" />
+        <activity android:name=".PatientsActivity" />
+        <activity android:name=".HomeActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

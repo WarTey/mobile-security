@@ -1,11 +1,29 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="StyleToastFail">
+        <item name="stTextBold">true</item>
+        <item name="stTextColor">#FFFFFF</item>
+        <item name="stColorBackground">#FDAF17</item>
+        <item name="stSolidBackground">true</item>
+        <item name="stIconStart">@drawable/ic_error_outline_24px</item>
+        <item name="stRadius">4dp</item>
+    </style>
+
+    <style name="StyleToastSuccess">
+        <item name="stTextBold">true</item>
+        <item name="stTextColor">#FFFFFF</item>
+        <item name="stColorBackground">#28B62C</item>
+        <item name="stSolidBackground">true</item>
+        <item name="stIconStart">@drawable/ic_done_24px</item>
+        <item name="stRadius">4dp</item>
     </style>
 
 </resources>
