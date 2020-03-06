@@ -26,23 +26,23 @@ class PendingViewHolder(itemView: View, context: Context, pendingMode: Boolean) 
                 { _, _ -> setKey("user", context) }.show()
             } else {
                 MaterialAlertDialogBuilder(context).setTitle("Désactiver l'inscription ?").setPositiveButton("Oui")
-                { _, _ -> makeProgress(context) }.show()
+                { _, _ -> makeProgress("InProgressN", context) }.show()
             }
         }
     }
 
-    private fun makeProgress(context: Context) {
+    private fun makeProgress(type: String, context: Context) {
         val firestore = FirebaseFirestore.getInstance()
         val pendingRef = firestore.collection("pending").document(itemView.txtEmail.text.toString())
 
-        pendingRef.update("status", "InProgress").addOnSuccessListener {
-            StyleableToast.makeText(context, context.getString(R.string.registration_accepted), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+        pendingRef.update("status", type).addOnSuccessListener {
+            StyleableToast.makeText(context, context.getString(R.string.pending_register), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
         }.addOnFailureListener {
             StyleableToast.makeText(context, context.getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
         }
     }
 
-    private fun makeUpdate(type: String, context: Context, key: String) {
+    private fun makeUpdateBoth(type: String, context: Context, key: String) {
         val firestore = FirebaseFirestore.getInstance()
         val pendingRef = firestore.collection("pending").document(itemView.txtEmail.text.toString())
 
@@ -58,25 +58,29 @@ class PendingViewHolder(itemView: View, context: Context, pendingMode: Boolean) 
         val pendingRef = firestore.collection("pending").document(itemView.txtEmail.text.toString())
 
         pendingRef.get().addOnSuccessListener { user ->
-            val adminRef = firestore.collection("pending").document(FirebaseAuth.getInstance().currentUser?.email.toString())
-            adminRef.get().addOnSuccessListener {
-                val keyStore = KeyStore.getInstance("AndroidKeyStore")
-                keyStore.load(null)
-                val keyPair = keyStore.getEntry("ProjectMobileSecurity", null) as KeyStore.PrivateKeyEntry
+            if (user.data?.get("status").toString() == "InProgressN")
+                makeProgress(type, context)
+            else {
+                val adminRef = firestore.collection("pending").document(FirebaseAuth.getInstance().currentUser?.email.toString())
+                adminRef.get().addOnSuccessListener {
+                    val keyStore = KeyStore.getInstance("AndroidKeyStore")
+                    keyStore.load(null)
+                    val keyPair = keyStore.getEntry("ProjectMobileSecurity", null) as KeyStore.PrivateKeyEntry
 
-                val keyAdmin = it.data?.get("key").toString()
-                val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-                cipher.init(Cipher.DECRYPT_MODE, keyPair.privateKey)
-                val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))
+                    val keyAdmin = it.data?.get("key").toString()
+                    val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+                    cipher.init(Cipher.DECRYPT_MODE, keyPair.privateKey)
+                    val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))
 
-                val keyUser = user.data?.get("key").toString()
-                val publicKey = KeyFactory.getInstance("RSA").generatePublic(X509EncodedKeySpec(Base64.decode(keyUser, Base64.DEFAULT)))
-                cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-                val keyAESCipher = cipher.doFinal(keyAES)
+                    val keyUser = user.data?.get("key").toString()
+                    val publicKey = KeyFactory.getInstance("RSA").generatePublic(X509EncodedKeySpec(Base64.decode(keyUser, Base64.DEFAULT)))
+                    cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+                    val keyAESCipher = cipher.doFinal(keyAES)
 
-                makeUpdate(type, context, Base64.encodeToString(keyAESCipher, Base64.DEFAULT))
-            }.addOnFailureListener {
-                StyleableToast.makeText(context, context.getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+                    makeUpdateBoth(type, context, Base64.encodeToString(keyAESCipher, Base64.DEFAULT))
+                }.addOnFailureListener {
+                    StyleableToast.makeText(context, context.getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+                }
             }
         }.addOnFailureListener {
             StyleableToast.makeText(context, context.getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()

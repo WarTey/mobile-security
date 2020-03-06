@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.Query
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import fr.isen.guillaume.mobilesecurity.recycler.RecyclerAdapter
+import fr.isen.guillaume.mobilesecurity.tools.Connectivity
 import kotlinx.android.synthetic.main.activity_pending_mode.*
 
 class PendingModeActivity : AppCompatActivity() {
@@ -28,7 +30,7 @@ class PendingModeActivity : AppCompatActivity() {
         val firestore = FirebaseFirestore.getInstance()
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val pendingRef = firestore.collection("pending")
-        val pendingQuery = pendingRef.whereEqualTo("status", "InProgress").orderBy("email", Query.Direction.ASCENDING)
+        val pendingQuery = pendingRef.whereIn("status", mutableListOf("InProgress", "InProgressN")).orderBy("email", Query.Direction.ASCENDING)
         val pending = ArrayList<Pending>()
 
         pendingQuery.get().addOnSuccessListener {
