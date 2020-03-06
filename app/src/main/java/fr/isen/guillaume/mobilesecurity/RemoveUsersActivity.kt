@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.QuerySnapshot
 import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.model.Pending
@@ -26,6 +27,7 @@ class RemoveUsersActivity : AppCompatActivity() {
 
     private fun initRecycler() {
         val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val pendingRef = firestore.collection("pending")
         val pending = ArrayList<Pending>()
 

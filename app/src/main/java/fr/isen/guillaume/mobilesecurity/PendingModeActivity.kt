@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.muddzdev.styleabletoast.StyleableToast
@@ -25,6 +26,7 @@ class PendingModeActivity : AppCompatActivity() {
 
     private fun initRecycler() {
         val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val pendingRef = firestore.collection("pending")
         val pendingQuery = pendingRef.whereEqualTo("status", "InProgress").orderBy("email", Query.Direction.ASCENDING)
         val pending = ArrayList<Pending>()

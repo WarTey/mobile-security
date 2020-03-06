@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_register.*
@@ -87,6 +88,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun sendRequest(firebaseAuth: FirebaseAuth) {
         val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val start = Calendar.getInstance()
         val end = Calendar.getInstance()
         end.add(Calendar.YEAR, 1)

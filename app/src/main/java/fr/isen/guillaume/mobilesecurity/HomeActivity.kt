@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.animation.AnimationUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
@@ -35,6 +36,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun checkPending(firebaseAuth: FirebaseAuth) {
         val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
 
         pendingRef?.get()?.addOnSuccessListener {

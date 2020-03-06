@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -79,6 +80,7 @@ class LoginActivity : AppCompatActivity() {
     private fun viewEmailCheckError(firebaseAuth: FirebaseAuth) {
         resetInputError()
         val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
 
         pendingRef?.get()?.addOnSuccessListener {
@@ -95,6 +97,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkPending(firebaseAuth: FirebaseAuth) {
         val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
         val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
 
         pendingRef?.get()?.addOnSuccessListener {
