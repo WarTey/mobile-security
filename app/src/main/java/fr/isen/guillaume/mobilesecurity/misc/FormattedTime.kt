@@ -1,6 +1,5 @@
 package fr.isen.guillaume.mobilesecurity.misc
 
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,8 +21,12 @@ class FormattedTime {
             return SimpleDateFormat("dd/MM/yyyy", Locale.FRENCH).format(millis)
         }
 
-        fun parse(dateStr: String): Long {
-            return 0L
+        fun parse(dateStr: String, french: Boolean): Long {
+            return Calendar.getInstance().also { cal ->
+                dateStr.split('/').map { str -> Integer.parseInt(str) }.let {
+                    cal.set(it[2], it[french.compareTo(false)]-1, it[french.compareTo(true)])
+                }
+            }.timeInMillis
         }
     }
 }

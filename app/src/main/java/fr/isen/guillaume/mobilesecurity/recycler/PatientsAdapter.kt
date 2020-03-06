@@ -1,12 +1,14 @@
 package fr.isen.guillaume.mobilesecurity.recycler
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import fr.isen.guillaume.mobilesecurity.PatientActivity
 import fr.isen.guillaume.mobilesecurity.R
 import fr.isen.guillaume.mobilesecurity.model.Patient
 import kotlinx.android.synthetic.main.recyclerview_patients.view.*
@@ -14,6 +16,7 @@ import kotlinx.android.synthetic.main.recyclerview_patients.view.*
 class PatientsAdapter(private val items: ArrayList<Patient>, private val context: Context) :
     RecyclerView.Adapter<PatientsAdapter.ViewHolder>() {
 
+    // Gestion des items
     override fun getItemCount(): Int {
         return items.size
     }
@@ -52,6 +55,8 @@ class PatientsAdapter(private val items: ArrayList<Patient>, private val context
         }
     }
 
+
+    // Gestion du recycler view
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(context).inflate(R.layout.recyclerview_patients, parent, false)
@@ -61,6 +66,8 @@ class PatientsAdapter(private val items: ArrayList<Patient>, private val context
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val p = items[position]
 
+        holder.reference = p.reference
+
         holder.txtFirstname.text = p.firstname
         holder.txtLastname.text = p.lastname
 
@@ -69,9 +76,22 @@ class PatientsAdapter(private val items: ArrayList<Patient>, private val context
     }
 
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtFirstname: TextView = view.txtFirstname
         val txtLastname: TextView = view.txtLastname
         val imgPatient: ImageView = view.imgPatient as ImageView
+
+        var reference: String? = null
+
+        init {
+            view.setOnClickListener {
+                context.startActivity(
+                    Intent(
+                        context,
+                        PatientActivity::class.java
+                    ).putExtra("reference", reference)
+                )
+            }
+        }
     }
 }

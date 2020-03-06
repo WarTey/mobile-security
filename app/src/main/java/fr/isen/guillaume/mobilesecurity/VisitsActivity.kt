@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -18,6 +19,8 @@ class VisitsActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var visitsQuery: Query
+
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var adapter: VisitsAdapter
 
@@ -33,7 +36,9 @@ class VisitsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_visits)
 
-        adapter = VisitsAdapter(ArrayList(), this)
+        auth = FirebaseAuth.getInstance()
+
+        adapter = VisitsAdapter(ArrayList(), this, VisitsAdapter.VisitType.PATIENT)
 
         recyclerVisits.layoutManager = LinearLayoutManager(this)
         recyclerVisits.addItemDecoration(
@@ -62,6 +67,7 @@ class VisitsActivity : AppCompatActivity() {
 
             lastId = null
             modeLoaded = it.itemId
+            adapter.invertMode()
 
             recyclerVisits.scrollToPosition(0)
             return@setOnNavigationItemSelectedListener updateVisits(it.itemId, true)
@@ -80,6 +86,8 @@ class VisitsActivity : AppCompatActivity() {
     private fun execQuery(query: Query, replace: Boolean) {
         query.get().addOnSuccessListener {
             if (it.size() <= 0) {
+                if (replace)
+                    adapter.clearItems()
                 endLoading()
                 return@addOnSuccessListener
             }
@@ -95,6 +103,9 @@ class VisitsActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             endLoading()
         }.addOnFailureListener {
+            if (replace)
+                adapter.clearItems()
+            endLoading()
             Toast.makeText(this, "Erreur BDD", Toast.LENGTH_SHORT).show()
         }
     }
@@ -105,8 +116,7 @@ class VisitsActivity : AppCompatActivity() {
 
             execQuery(visitsQuery.run {
                 // Mine or All
-                // DEBUG: get visitor name
-                return@run if (id == R.id.itemMe) whereEqualTo("visitor.name", "pascal") else this
+                return@run if (id == R.id.itemMe) whereEqualTo("visitor.id", auth.currentUser!!.uid) else this
             }.run {
                 // Pagination if needed
                 return@run if (lastId == null) this else this.startAfter(lastId!!)

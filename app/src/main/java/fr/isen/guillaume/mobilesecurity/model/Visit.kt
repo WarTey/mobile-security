@@ -1,7 +1,5 @@
 package fr.isen.guillaume.mobilesecurity.model
 
-import com.google.firebase.firestore.DocumentReference
-
 class Visit() {
     var id: String? = null
     var millis: Long? = null
@@ -10,7 +8,13 @@ class Visit() {
     var patient = HashMap<String, String>()
     var visitor = HashMap<String, String>()
 
-    constructor(pId: String, pMillis: Long, pActions: String, pPatient: HashMap<String, String>, pVisitor: HashMap<String, String>) : this() {
+    constructor(
+        pId: String,
+        pMillis: Long,
+        pActions: String,
+        pPatient: HashMap<String, String>,
+        pVisitor: HashMap<String, String>
+    ) : this() {
         id = pId
         millis = pMillis
         actions = pActions
@@ -22,6 +26,7 @@ class Visit() {
         id = pId
         return this
     }
+
 
     companion object {
         fun isValid(map: HashMap<String, Comparable<*>?>?): Boolean {

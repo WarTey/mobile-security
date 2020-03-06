@@ -2,7 +2,6 @@ package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +37,7 @@ class PatientActivity : AppCompatActivity() {
         if (patientReference == null)
             exitActivity()
 
-        adapter = VisitsAdapter(ArrayList(), this)
+        adapter = VisitsAdapter(ArrayList(), this, VisitsAdapter.VisitType.PATIENT_VISITOR)
 
         visitsRecycler.layoutManager = LinearLayoutManager(this)
         visitsRecycler.addItemDecoration(
@@ -90,7 +89,7 @@ class PatientActivity : AppCompatActivity() {
                 Intent(
                     this,
                     AddVisitActivity::class.java
-                )
+                ).putExtra("reference", patient.reference)
             )
         }
     }
@@ -110,12 +109,9 @@ class PatientActivity : AppCompatActivity() {
 
             adapter.notifyDataSetChanged()
             endLoading()
-        }?.addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(this, "YESSAI", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "NOPE", Toast.LENGTH_SHORT).show()
-            }
+        }?.addOnFailureListener {
+            endLoading()
+            Toast.makeText(this, "Erreur BDD", Toast.LENGTH_SHORT).show()
         }
     }
 

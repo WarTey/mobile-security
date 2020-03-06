@@ -8,16 +8,28 @@ class Patient() {
     var reference: String? = null
     var firstname: String? = null
     var lastname: String? = null
-    var picture: Uri? = null
-    //var visits = ArrayList<Visit>()
 
-    constructor(pId: String, pReference: String, pFirstname: String, pLastname: String, pPicture: Uri?/*, pVisits: ArrayList<Visit>*/) : this() {
+    var pathology: String? = null
+    var treatment: String? = null
+
+    var picture: Uri? = null
+
+    constructor(
+        pId: String,
+        pReference: String,
+        pFirstname: String,
+        pLastname: String,
+        pPathology: String,
+        pTreatment: String,
+        pPicture: Uri?
+    ) : this() {
         id = pId
         reference = pReference
         firstname = pFirstname
         lastname = pLastname
+        pathology = pPathology
+        treatment = pTreatment
         picture = pPicture
-        //visits.addAll(pVisits)
     }
 
     fun setIdAnd(pId: String): Patient {
@@ -25,20 +37,12 @@ class Patient() {
         return this
     }
 
-    fun toMap(): HashMap<String, Comparable<*>?> {
-        return hashMapOf(
-            "reference" to reference,
-            "firstname" to firstname,
-            "lastname" to lastname,
-            "picture" to picture
-        )
-    }
 
     companion object {
         fun isValid(map: HashMap<String, Comparable<*>?>?): Boolean {
             if (map == null)
                 return false
-            return checkField(map["reference"]) && checkField(map["firstname"]) && checkField(map["lastname"] != null)
+            return checkField(map["reference"]) && checkField(map["firstname"]) && checkField(map["lastname"])
         }
 
         private fun checkField(field: Comparable<*>?): Boolean {
