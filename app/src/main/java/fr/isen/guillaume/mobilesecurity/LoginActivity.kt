@@ -1,6 +1,7 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -18,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true)
+        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true && !isEmulator())
             checkPending(firebaseAuth)
 
         initLayout()
@@ -26,6 +27,10 @@ class LoginActivity : AppCompatActivity() {
         btnNew.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
         btnForget.setOnClickListener { forgetPassword() }
         btnSend.setOnClickListener { login() }
+    }
+
+    private fun isEmulator(): Boolean {
+        return Build.FINGERPRINT.contains("generic")
     }
 
     private fun initLayout() {
