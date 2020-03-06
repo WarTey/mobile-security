@@ -1,17 +1,32 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.security.KeyPairGeneratorSpec
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.muddzdev.styleabletoast.StyleableToast
+import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_login.*
+import java.lang.StringBuilder
+import java.math.BigInteger
+import java.security.KeyPairGenerator
+import java.security.KeyStore
+import java.security.SecureRandom
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.security.auth.x500.X500Principal
 
 class LoginActivity : AppCompatActivity() {
 

@@ -1,8 +1,15 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.security.KeyPairGeneratorSpec
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Base64
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -10,9 +17,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_register.*
+import java.lang.StringBuilder
+import java.math.BigInteger
 import java.security.KeyPairGenerator
+import java.security.KeyStore
 import java.util.*
 import java.util.regex.Pattern
+import javax.security.auth.x500.X500Principal
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -83,11 +94,16 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun sendRequest(firebaseAuth: FirebaseAuth) {
         val firestore = FirebaseFirestore.getInstance()
-        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-        keyPairGenerator.initialize(3072)
+        val start = Calendar.getInstance()
+        val end = Calendar.getInstance()
+        end.add(Calendar.YEAR, 1)
+        val spec = KeyPairGeneratorSpec.Builder(this).setAlias("ProjectMobileSecurity").setSubject(X500Principal("CN=Sample Name, O=Android Authority")).setSerialNumber(BigInteger.ONE).setStartDate(start.time).setEndDate(end.time).build()
+        val generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore")
+        generator.initialize(spec)
+        val keyPair = generator.generateKeyPair()
 
         val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
-        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Arrays.toString(keyPairGenerator.genKeyPair().private.encoded), "InProgress") }
+        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT), "InProgress") }
 
         pending?.let {
             pendingRef?.set(it)?.addOnSuccessListener {
