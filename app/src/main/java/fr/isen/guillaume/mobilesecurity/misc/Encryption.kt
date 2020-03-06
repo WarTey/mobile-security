@@ -7,6 +7,9 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.memberProperties
 
 
 class Encryption {
@@ -65,5 +68,25 @@ class Encryption {
             .also { it.init(Cipher.DECRYPT_MODE, keySpec, ivSpec) }
         return cipher.doFinal(encryptedBytes.copyOfRange(SIZE, encryptedBytes.size))
             .toString(Charset.defaultCharset())
+    }
+
+    fun <T : Any> iterateEncrypt(obj: T): T {
+        obj::class.memberProperties.filter { it.visibility == KVisibility.PUBLIC }
+            .filter { it.returnType.classifier == String::class }
+            .filterIsInstance<KMutableProperty<*>>().forEach {
+            it.setter.call(obj, encrypt(it.getter.call(obj) as String))
+        }
+
+        return obj
+    }
+
+    fun <T : Any> iterateDecrypt(obj: T): T {
+        obj::class.memberProperties.filter { it.visibility == KVisibility.PUBLIC }
+            .filter { it.returnType.classifier == String::class }
+            .filterIsInstance<KMutableProperty<*>>().forEach {
+            it.setter.call(obj, decrypt(it.getter.call(obj) as String))
+        }
+
+        return obj
     }
 }
