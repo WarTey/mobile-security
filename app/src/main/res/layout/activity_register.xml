@@ -51,27 +51,6 @@
             app:layout_constraintTop_toBottomOf="@+id/imgLogo">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputToken"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:boxBackgroundColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtToken"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_local_offer_24px"
-                    android:drawablePadding="10dp"
-                    android:ems="15"
-                    android:hint="@string/token"
-                    android:inputType="textNoSuggestions" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputName"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="wrap_content"
@@ -80,7 +59,7 @@
                 app:boxBackgroundColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/inputToken">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtName"

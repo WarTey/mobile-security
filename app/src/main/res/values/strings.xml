@@ -11,6 +11,9 @@
     <string name="connection_error_message">Votre email et/ou mot de passe sont incorrects</string>
     <string name="empty_input">Veuillez remplir ce champ</string>
     <string name="email_sent">Email envoyé</string>
+    <string name="check_email">Inscription acceptée. Veuillez vérifier vos emails</string>
+    <string name="error_status">Votre inscription n\'est peut-être pas encore prête</string>
+    <string name="error_registration">Une erreur est survenue</string>
 
     <!-- RegisterActivity -->
     <string name="token">Token</string>
@@ -23,7 +26,8 @@
     <string name="incorrect_token">Token incorrect</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="register_error">Erreur lors de l\'inscription</string>
-    <string name="check_email">Veuillez vérifier vos emails</string>
+    <string name="registration_sent">Demande d\'inscription envoyée</string>
+    <string name="registration_not_sent">Demande d\'inscription échouée</string>
 
     <!-- HomeActivity -->
     <string name="my_dashboard">My Dashboard</string>
@@ -58,4 +62,24 @@
     <!-- AddVisitActivity -->
     <string name="add_visit">Ajout d\'une visite</string>
     <string name="date">Date</string>
+
+    <!-- PhoneVerificationActivity -->
+    <string name="send_code">Envoyer le code</string>
+    <string name="next">Continuer</string>
+    <string name="no_code">Pas de code ?</string>
+    <string name="code_error">Le code est incorrect</string>
+    <string name="not_phone_number">Numéro de téléphone incorrect</string>
+    <string name="code_sent">Code envoyé</string>
+    <string name="code_pending">Code en cours d\'envoie</string>
+    <string name="code_failed">Envoie du code échoué</string>
+    <string name="back">Retour</string>
+
+    <!-- SettingsActivity -->
+    <string name="reset_password">Réinitialiser mon mot de passe</string>
+    <string name="pending_register">Inscriptions en attentes</string>
+    <string name="activate_pin">Activer le Fingerprint</string>
+    <string name="error">Erreur lors de l\'envoie du mail</string>
+    <string name="accept_user">Sélectionnez un utilisateur à approuver</string>
+    <string name="registration_accepted">Inscription acceptée</string>
+    <string name="remove_register">Suppression utilisateurs</string>
 </resources>

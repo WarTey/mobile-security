@@ -77,7 +77,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:cardElevation="6dp"
-            app:layout_constraintEnd_toStartOf="@+id/materialOldPatients"
+            app:layout_constraintEnd_toStartOf="@+id/materialCardVisits"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -96,7 +96,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialOldPatients"
+            android:id="@+id/materialCardVisits"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -107,30 +107,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/materialCardPatients"
             app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/txtOldPatients"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawableTop="@drawable/patients"
-                android:drawablePadding="12dp"
-                android:padding="16dp"
-                android:text="@string/old_patients"
-                android:textAlignment="center"
-                android:textColor="@color/colorGrey"
-                android:textSize="18sp" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardVisits"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardElevation="6dp"
-            app:layout_constraintEnd_toStartOf="@+id/materialCardMail"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardPatients">
 
             <TextView
                 android:id="@+id/txtVisits"
@@ -147,62 +123,14 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardMail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardElevation="6dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/materialCardVisits"
-            app:layout_constraintTop_toBottomOf="@+id/materialOldPatients">
-
-            <TextView
-                android:id="@+id/txtMail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawableTop="@drawable/mail"
-                android:drawablePadding="12dp"
-                android:padding="16dp"
-                android:text="@string/mail"
-                android:textAlignment="center"
-                android:textColor="@color/colorGrey"
-                android:textSize="18sp" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardTokens"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardElevation="6dp"
-            app:layout_constraintEnd_toStartOf="@+id/materialCardSettings"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardVisits">
-
-            <TextView
-                android:id="@+id/txtTokens"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawableTop="@drawable/tokens"
-                android:drawablePadding="12dp"
-                android:padding="16dp"
-                android:text="@string/tokens"
-                android:textAlignment="center"
-                android:textColor="@color/colorGrey"
-                android:textSize="18sp" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardSettings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardElevation="6dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/materialCardTokens"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardMail">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardVisits">
 
             <TextView
                 android:id="@+id/txtSettings"
@@ -226,7 +154,7 @@
             android:text="@string/disconnection"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardTokens" />
+            app:layout_constraintTop_toBottomOf="@+id/materialCardSettings" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

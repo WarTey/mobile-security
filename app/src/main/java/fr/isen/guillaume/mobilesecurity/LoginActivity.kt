@@ -1,12 +1,15 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -16,14 +19,19 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val auth = FirebaseAuth.getInstance()
-        if (auth.currentUser != null) goToHome()
+        val firebaseAuth = FirebaseAuth.getInstance()
+        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true && !isEmulator())
+            checkPending(firebaseAuth)
 
         initLayout()
 
         btnNew.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
         btnForget.setOnClickListener { forgetPassword() }
         btnSend.setOnClickListener { login() }
+    }
+
+    private fun isEmulator(): Boolean {
+        return Build.FINGERPRINT.contains("generic")
     }
 
     private fun initLayout() {
@@ -40,9 +48,9 @@ class LoginActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     val isEmailVerified = firebaseAuth.currentUser?.isEmailVerified
                     if (isEmailVerified != null && isEmailVerified)
-                        goToHome()
+                        checkPending(firebaseAuth)
                     else
-                        viewEmailCheckError()
+                        viewEmailCheckError(firebaseAuth)
                 } else
                     viewLoginError()
             }
@@ -64,9 +72,38 @@ class LoginActivity : AppCompatActivity() {
         StyleableToast.makeText(this, getString(R.string.connection_error_message), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
     }
 
-    private fun viewEmailCheckError() {
+    private fun verifyEmail(firebaseAuth: FirebaseAuth) {
+        firebaseAuth.currentUser?.sendEmailVerification()
+        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+    }
+
+    private fun viewEmailCheckError(firebaseAuth: FirebaseAuth) {
         resetInputError()
-        StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
+
+        pendingRef?.get()?.addOnSuccessListener {
+            if (it.data?.get("status") == "InProgress")
+                StyleableToast.makeText(this, getString(R.string.error_status), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+            else if (it.data?.get("status") == "user" || it.data?.get("status") == "admin") {
+                verifyEmail(firebaseAuth)
+                StyleableToast.makeText(this, getString(R.string.check_email), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+            }
+        }?.addOnFailureListener {
+            StyleableToast.makeText(this, getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
+        }
+    }
+
+    private fun checkPending(firebaseAuth: FirebaseAuth) {
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
+
+        pendingRef?.get()?.addOnSuccessListener {
+            if (it.data?.get("status").toString() != "InProgress")
+                goToPhone()
+        }
     }
 
     private fun viewBadInput() {
@@ -92,10 +129,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToHome() {
-        val intentHome = Intent(this, HomeActivity::class.java)
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentHome)
+    private fun goToPhone() {
+        val intentPhone = Intent(this, PhoneVerificationActivity::class.java)
+        intentPhone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intentPhone)
         finish()
     }
 }
