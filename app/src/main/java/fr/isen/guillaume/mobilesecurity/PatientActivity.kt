@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.model.Patient
 import fr.isen.guillaume.mobilesecurity.model.Visit
 import fr.isen.guillaume.mobilesecurity.recycler.VisitsAdapter
@@ -50,13 +51,13 @@ class PatientActivity : AppCompatActivity() {
 
         // Database reference and general query
         db = FirebaseFirestore.getInstance()
-        db.collection("patients").whereEqualTo("reference", patientReference).get()
+        db.collection("patients").whereEqualTo("reference", Encryption.getInstance().encrypt(patientReference)).get()
             .addOnSuccessListener {
                 if (it.size() > 0) {
                     val p = it.documents.first().toObject(Patient::class.java)
 
                     if (p != null) {
-                        patient = p
+                        patient = Encryption.getInstance().iterateDecrypt(p)
 
                         txtFirstname.text =
                             resources.getString(R.string.patient_firstname, patient.firstname)
@@ -70,7 +71,7 @@ class PatientActivity : AppCompatActivity() {
 
 
                         visitsQuery = db.collection("visits")
-                            .whereEqualTo("patient.reference", p.reference)
+                            .whereEqualTo("patient.reference", Encryption.getInstance().encrypt(p.reference))
                             .orderBy("millis", Query.Direction.DESCENDING)
                         updateVisits()
 

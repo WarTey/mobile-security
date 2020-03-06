@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.model.Patient
 import kotlinx.android.synthetic.main.activity_add_patient.*
 
@@ -44,7 +45,7 @@ class AddPatientActivity : AppCompatActivity() {
             patient.setIdAnd(doc.id)//.encrypt()
 
             // Ajout du patient
-            doc.set(patient).addOnSuccessListener {
+            doc.set(Encryption.getInstance().iterateEncrypt(patient)).addOnSuccessListener {
                 Toast.makeText(this, "Ajouté !", Toast.LENGTH_SHORT).show()
                 finish()
             }.addOnFailureListener {

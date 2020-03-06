@@ -38,7 +38,10 @@ class Encryption {
         keySpec = SecretKeySpec(key, "AES")
     }
 
-    fun encrypt(plain: String): String {
+    fun encrypt(plain: String?): String? {
+        if (plain == null)
+            return null
+
         val plainBytes = plain.toByteArray()
 
         // Génération d'un IV
@@ -57,7 +60,10 @@ class Encryption {
         return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
-    fun decrypt(encryptedB64: String): String {
+    fun decrypt(encryptedB64: String?): String? {
+        if (encryptedB64 == null)
+            return null
+
         val encryptedBytes = Base64.decode(encryptedB64, Base64.DEFAULT)
 
         // Récupération de l'IV
@@ -74,8 +80,8 @@ class Encryption {
         obj::class.memberProperties.filter { it.visibility == KVisibility.PUBLIC }
             .filter { it.returnType.classifier == String::class }
             .filterIsInstance<KMutableProperty<*>>().forEach {
-            it.setter.call(obj, encrypt(it.getter.call(obj) as String))
-        }
+                it.setter.call(obj, encrypt(it.getter.call(obj) as String))
+            }
 
         return obj
     }
@@ -84,8 +90,8 @@ class Encryption {
         obj::class.memberProperties.filter { it.visibility == KVisibility.PUBLIC }
             .filter { it.returnType.classifier == String::class }
             .filterIsInstance<KMutableProperty<*>>().forEach {
-            it.setter.call(obj, decrypt(it.getter.call(obj) as String))
-        }
+                it.setter.call(obj, decrypt(it.getter.call(obj) as String))
+            }
 
         return obj
     }

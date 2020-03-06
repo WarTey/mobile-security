@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.model.Patient
 import fr.isen.guillaume.mobilesecurity.recycler.PatientsAdapter
 import kotlinx.android.synthetic.main.activity_patients.*
@@ -46,7 +47,7 @@ class PatientsActivity : AppCompatActivity() {
 
         // Database reference and general query
         db = FirebaseFirestore.getInstance()
-        patientsQuery = db.collection("patients").orderBy("lastname").limit(LIMIT_LOAD)
+        patientsQuery = db.collection("patients").limit(LIMIT_LOAD)
 
         // Load first patients
         updatePatients()
@@ -84,7 +85,7 @@ class PatientsActivity : AppCompatActivity() {
                 }
 
                 lastId = it.documents.last()
-                it.map { doc -> doc.toObject(Patient::class.java).setIdAnd(doc.id) }.let { items ->
+                it.map { doc -> Encryption.getInstance().iterateDecrypt(doc.toObject(Patient::class.java)) }.let { items ->
                     adapter.addItems(ArrayList(items))
                 }
 
