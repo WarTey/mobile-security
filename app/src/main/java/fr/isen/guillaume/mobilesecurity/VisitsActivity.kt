@@ -11,11 +11,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.model.Visit
 import fr.isen.guillaume.mobilesecurity.recycler.VisitsAdapter
 import kotlinx.android.synthetic.main.activity_visits.*
 
 class VisitsActivity : AppCompatActivity() {
+
+    private lateinit var crypto: Encryption
 
     private lateinit var db: FirebaseFirestore
     private lateinit var visitsQuery: Query
@@ -35,6 +38,8 @@ class VisitsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_visits)
+
+        crypto = Encryption.getInstance()
 
         auth = FirebaseAuth.getInstance()
 
@@ -93,7 +98,7 @@ class VisitsActivity : AppCompatActivity() {
             }
 
             lastId = it.documents.last()
-            it.map { doc -> doc.toObject(Visit::class.java).setIdAnd(doc.id) }.let { items ->
+            it.map { doc -> crypto.iterateDecrypt(doc.toObject(Visit::class.java)) }.let { items ->
                 if (replace)
                     adapter.updateItems(ArrayList(items))
                 else
@@ -116,7 +121,7 @@ class VisitsActivity : AppCompatActivity() {
 
             execQuery(visitsQuery.run {
                 // Mine or All
-                return@run if (id == R.id.itemMe) whereEqualTo("visitor.id", auth.currentUser!!.uid) else this
+                return@run if (id == R.id.itemMe) whereEqualTo("visitor.id", crypto.encrypt(auth.currentUser!!.uid)) else this
             }.run {
                 // Pagination if needed
                 return@run if (lastId == null) this else this.startAfter(lastId!!)

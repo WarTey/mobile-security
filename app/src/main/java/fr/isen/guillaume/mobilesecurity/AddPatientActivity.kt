@@ -12,11 +12,14 @@ import kotlinx.android.synthetic.main.activity_add_patient.*
 
 class AddPatientActivity : AppCompatActivity() {
 
+    private lateinit var crypto: Encryption
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_patient)
+
+        crypto = Encryption.getInstance()
 
         // Référence Firestore
         db = FirebaseFirestore.getInstance()
@@ -29,11 +32,6 @@ class AddPatientActivity : AppCompatActivity() {
     }
 
     private fun addPatient() {
-        /*patient = hashMapOf(
-            "firstname" to get(txtFirstname),
-            "lastname" to get(txtLastname),
-            "reference" to get(txtReference)
-        )*/
         // Patient à ajouter
         val patient = Patient("", get(txtReference), get(txtFirstname), get(txtLastname), get(txtPathology), get(txtTreatment), null)
 
@@ -42,10 +40,10 @@ class AddPatientActivity : AppCompatActivity() {
             val doc = db.collection("patients").document()
 
             // Chiffrement du patient
-            patient.setIdAnd(doc.id)//.encrypt()
+            patient.setIdAnd(doc.id)
 
             // Ajout du patient
-            doc.set(Encryption.getInstance().iterateEncrypt(patient)).addOnSuccessListener {
+            doc.set(crypto.iterateEncrypt(patient)).addOnSuccessListener {
                 Toast.makeText(this, "Ajouté !", Toast.LENGTH_SHORT).show()
                 finish()
             }.addOnFailureListener {

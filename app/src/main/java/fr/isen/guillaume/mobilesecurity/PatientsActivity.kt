@@ -18,6 +18,8 @@ import kotlinx.android.synthetic.main.activity_patients.*
 
 class PatientsActivity : AppCompatActivity() {
 
+    private lateinit var crypto: Encryption
+
     private lateinit var db: FirebaseFirestore
     private lateinit var patientsQuery: Query
 
@@ -33,6 +35,8 @@ class PatientsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patients)
+
+        crypto = Encryption.getInstance()
 
         adapter = PatientsAdapter(ArrayList(), this)
 
@@ -85,7 +89,7 @@ class PatientsActivity : AppCompatActivity() {
                 }
 
                 lastId = it.documents.last()
-                it.map { doc -> Encryption.getInstance().iterateDecrypt(doc.toObject(Patient::class.java)) }.let { items ->
+                it.map { doc -> crypto.iterateDecrypt(doc.toObject(Patient::class.java)) }.let { items ->
                     adapter.addItems(ArrayList(items))
                 }
 

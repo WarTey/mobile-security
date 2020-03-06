@@ -7,6 +7,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.misc.FormattedTime
 import fr.isen.guillaume.mobilesecurity.model.Visit
 import kotlinx.android.synthetic.main.activity_add_visit.*
@@ -14,12 +15,15 @@ import java.util.*
 
 class AddVisitActivity : AppCompatActivity() {
 
+    private lateinit var crypto: Encryption
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_visit)
+
+        crypto = Encryption.getInstance()
 
         // Si l'utilisateur n'est pas authentifié
         auth = FirebaseAuth.getInstance()
@@ -68,15 +72,6 @@ class AddVisitActivity : AppCompatActivity() {
     }
 
     private fun addVisit() {
-        /*visit = hashMapOf(
-            "firstname" to get(txtPatient),
-            "actions" to get(txtActions),
-            "visitor" to ref?.getField(),
-            "millis" to FormattedTime.parse(get(txtDate))
-        )
-        visit["visitor"] = hashMapOf(
-
-        )*/
         // Visite à ajouter
         val visit = Visit(
             "", FormattedTime.parse(get(txtDate), true), get(txtActions),
@@ -89,7 +84,7 @@ class AddVisitActivity : AppCompatActivity() {
         )
 
         if (true) {
-            db.collection("patients").whereEqualTo("reference", get(txtReference)).get().addOnSuccessListener {
+            db.collection("patients").whereEqualTo("reference", crypto.encrypt(get(txtReference))).get().addOnSuccessListener {
                 if (it.size() <= 0) {
                     Toast.makeText(this, "Erreur BDD : patient inexistant ?", Toast.LENGTH_SHORT)
                         .show()
@@ -100,14 +95,14 @@ class AddVisitActivity : AppCompatActivity() {
                 val doc = db.collection("visits").document()
 
                 // Chiffrement de la visite
-                it.documents.first().let { f ->
+                it.documents.first().let {f ->
                     visit.patient["name"] =
-                        f["firstname"].toString() + " " + f["lastname"].toString()
+                        crypto.decrypt(f["firstname"].toString()) + " " + crypto.decrypt(f["lastname"].toString())
                 }
-                visit.setIdAnd(doc.id)//.encrypt()
+                visit.setIdAnd(doc.id)
 
                 // Ajout de la visite
-                doc.set(visit).addOnSuccessListener {
+                doc.set(crypto.iterateEncrypt(visit)).addOnSuccessListener {
                     Toast.makeText(this, "Ajouté !", Toast.LENGTH_SHORT).show()
                     finish()
                 }.addOnFailureListener {

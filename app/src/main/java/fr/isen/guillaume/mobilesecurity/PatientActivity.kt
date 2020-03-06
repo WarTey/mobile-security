@@ -19,6 +19,8 @@ import kotlin.collections.ArrayList
 
 class PatientActivity : AppCompatActivity() {
 
+    private lateinit var crypto: Encryption
+
     private lateinit var db: FirebaseFirestore
     private var visitsQuery: Query? = null
 
@@ -38,6 +40,8 @@ class PatientActivity : AppCompatActivity() {
         if (patientReference == null)
             exitActivity()
 
+        crypto = Encryption.getInstance()
+
         adapter = VisitsAdapter(ArrayList(), this, VisitsAdapter.VisitType.PATIENT_VISITOR)
 
         visitsRecycler.layoutManager = LinearLayoutManager(this)
@@ -51,13 +55,13 @@ class PatientActivity : AppCompatActivity() {
 
         // Database reference and general query
         db = FirebaseFirestore.getInstance()
-        db.collection("patients").whereEqualTo("reference", Encryption.getInstance().encrypt(patientReference)).get()
+        db.collection("patients").whereEqualTo("reference", crypto.encrypt(patientReference)).get()
             .addOnSuccessListener {
                 if (it.size() > 0) {
                     val p = it.documents.first().toObject(Patient::class.java)
 
                     if (p != null) {
-                        patient = Encryption.getInstance().iterateDecrypt(p)
+                        patient = crypto.iterateDecrypt(p)
 
                         txtFirstname.text =
                             resources.getString(R.string.patient_firstname, patient.firstname)
@@ -71,7 +75,7 @@ class PatientActivity : AppCompatActivity() {
 
 
                         visitsQuery = db.collection("visits")
-                            .whereEqualTo("patient.reference", Encryption.getInstance().encrypt(p.reference))
+                            .whereEqualTo("patient.reference", crypto.encrypt(p.reference))
                             .orderBy("millis", Query.Direction.DESCENDING)
                         updateVisits()
 
@@ -104,7 +108,7 @@ class PatientActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            it.map { doc -> doc.toObject(Visit::class.java).setIdAnd(doc.id) }.let { items ->
+            it.map { doc -> crypto.iterateDecrypt(doc.toObject(Visit::class.java)) }.let { items ->
                 adapter.addItems(ArrayList(items))
             }
 
