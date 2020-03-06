@@ -1,9 +1,7 @@
 package fr.isen.guillaume.mobilesecurity.recycler
 
 import android.content.Context
-import android.security.KeyPairGeneratorSpec
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -14,16 +12,9 @@ import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.R
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.recyclerview_pending.view.*
-import java.lang.StringBuilder
-import java.math.BigInteger
-import java.nio.charset.Charset
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
-import java.util.*
 import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.SecretKeySpec
-import javax.security.auth.x500.X500Principal
 
 class PendingViewHolder(itemView: View, context: Context, pendingMode: Boolean) : RecyclerView.ViewHolder(itemView) {
 
@@ -35,8 +26,19 @@ class PendingViewHolder(itemView: View, context: Context, pendingMode: Boolean) 
                 { _, _ -> setKey("user", context) }.show()
             } else {
                 MaterialAlertDialogBuilder(context).setTitle("Désactiver l'inscription ?").setPositiveButton("Oui")
-                { _, _ -> makeUpdate("InProgress", context, "null") }.show()
+                { _, _ -> makeProgress(context) }.show()
             }
+        }
+    }
+
+    private fun makeProgress(context: Context) {
+        val firestore = FirebaseFirestore.getInstance()
+        val pendingRef = firestore.collection("pending").document(itemView.txtEmail.text.toString())
+
+        pendingRef.update("status", "InProgress").addOnSuccessListener {
+            StyleableToast.makeText(context, context.getString(R.string.registration_accepted), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+        }.addOnFailureListener {
+            StyleableToast.makeText(context, context.getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
         }
     }
 
