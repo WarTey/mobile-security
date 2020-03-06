@@ -65,19 +65,9 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:text="@string/remove_register"
-        app:layout_constraintBottom_toTopOf="@+id/btnFinger"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnFinger"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/activate_pin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRemove" />
+        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

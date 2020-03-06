@@ -28,12 +28,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun animCard() {
         materialCardPatients.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_one))
-        materialOldPatients.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_one))
-        materialCardVisits.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_two))
-        materialCardMail.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_two))
-        materialCardTokens.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_three))
-        materialCardSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_three))
-        btnLogout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_four))
+        materialCardVisits.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_one))
+        materialCardSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_two))
+        btnLogout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.translation_y_three))
     }
 
     private fun checkPending(firebaseAuth: FirebaseAuth) {
