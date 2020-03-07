@@ -1,9 +1,12 @@
 package fr.isen.guillaume.mobilesecurity
 
+import android.R.attr.publicKey
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.security.KeyPairGeneratorSpec
+import android.util.Base64
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,13 +14,57 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
+import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_login.*
+import java.math.BigInteger
+import java.security.KeyPairGenerator
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.security.auth.x500.X500Principal
+
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        /*val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
+        val start = Calendar.getInstance()
+        val end = Calendar.getInstance()
+        end.add(Calendar.YEAR, 1)
+        val spec = KeyPairGeneratorSpec.Builder(this).setAlias("ProjectMobileSecurity").setSubject(
+            X500Principal("CN=Sample Name, O=Android Authority")
+        ).setSerialNumber(BigInteger.ONE).setStartDate(start.time).setEndDate(end.time).build()
+        val generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore")
+        generator.initialize(spec)
+        val keyPair = generator.generateKeyPair()
+
+
+        val keyGen: KeyGenerator = KeyGenerator.getInstance("AES")
+        keyGen.init(256) // for example
+        val secretKey: SecretKey = keyGen.generateKey()
+
+        val encryptCipher: Cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        encryptCipher.init(Cipher.ENCRYPT_MODE, keyPair.public)
+
+        val cipherText: ByteArray = encryptCipher.doFinal(secretKey.encoded)
+
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
+        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Base64.encodeToString(cipherText, Base64.DEFAULT), "admin") }
+
+        pending?.let {
+            pendingRef?.set(it)?.addOnSuccessListener {
+                StyleableToast.makeText(this, getString(R.string.registration_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+            }?.addOnFailureListener {
+                StyleableToast.makeText(this, getString(R.string.registration_not_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
+            }
+        }*/
+
 
         val firebaseAuth = FirebaseAuth.getInstance()
         if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true && !isEmulator())

@@ -7,6 +7,7 @@ import android.view.animation.AnimationUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
@@ -18,6 +19,9 @@ class HomeActivity : AppCompatActivity() {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         if (firebaseUser != null && firebaseUser.isEmailVerified && intent.getBooleanExtra("phone", false)) checkPending(FirebaseAuth.getInstance())
         else goToLogin()
+
+        // Encryption init
+        Encryption.getInstance()
 
         animCard()
 

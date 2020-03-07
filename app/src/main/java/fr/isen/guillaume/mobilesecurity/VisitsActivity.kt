@@ -14,6 +14,7 @@ import com.google.firebase.firestore.Query
 import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.model.Visit
 import fr.isen.guillaume.mobilesecurity.recycler.VisitsAdapter
+import kotlinx.android.synthetic.main.activity_pending_mode.*
 import kotlinx.android.synthetic.main.activity_visits.*
 
 class VisitsActivity : AppCompatActivity() {
@@ -89,7 +90,7 @@ class VisitsActivity : AppCompatActivity() {
 
 
     private fun execQuery(query: Query, replace: Boolean) {
-        query.get().addOnSuccessListener {
+        /*query.get().addOnSuccessListener {
             if (it.size() <= 0) {
                 if (replace)
                     adapter.clearItems()
@@ -112,6 +113,33 @@ class VisitsActivity : AppCompatActivity() {
                 adapter.clearItems()
             endLoading()
             Toast.makeText(this, "Erreur BDD", Toast.LENGTH_SHORT).show()
+        }*/
+
+        query.addSnapshotListener { _, _ ->
+            query.get().addOnSuccessListener {
+                if (it.size() <= 0) {
+                    if (replace)
+                        adapter.clearItems()
+                    endLoading()
+                    return@addOnSuccessListener
+                }
+
+                lastId = it.documents.last()
+                it.map { doc -> crypto.iterateDecrypt(doc.toObject(Visit::class.java)) }.let { items ->
+                    if (replace)
+                        adapter.updateItems(ArrayList(items))
+                    else
+                        adapter.addItems(ArrayList(items))
+                }
+
+                adapter.notifyDataSetChanged()
+                endLoading()
+            }.addOnFailureListener {
+                if (replace)
+                    adapter.clearItems()
+                endLoading()
+                Toast.makeText(this, "Erreur BDD", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

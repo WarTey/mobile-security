@@ -1,7 +1,12 @@
 package fr.isen.guillaume.mobilesecurity.misc
 
 import android.util.Base64
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.nio.charset.Charset
+import java.security.KeyStore
+import java.security.PrivateKey
+import java.security.PublicKey
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -12,7 +17,7 @@ import kotlin.reflect.full.memberProperties
 
 class Encryption {
 
-    private var keySpec: SecretKeySpec
+    private var keySpec: SecretKeySpec? = null
 
     companion object {
         // Size (in octets) of block length
@@ -31,13 +36,35 @@ class Encryption {
     }
 
     init {
-        // DEBUG clef depuis keystore
-        val key = "SALUT LES LOULOU".toByteArray()
-        keySpec = SecretKeySpec(key, "AES")
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if (currentUser != null) {
+            val email = currentUser.email
+
+            if (email != null) {
+                FirebaseFirestore.getInstance().collection("pending").document(email).get().addOnSuccessListener {
+
+                    val keyStore =
+                        KeyStore.getInstance("AndroidKeyStore")
+                    keyStore.load(null)
+
+                    val privateKey: PrivateKey = keyStore.getKey("ProjectMobileSecurity", null) as PrivateKey
+                    val publicKey: PublicKey = keyStore.getCertificate("ProjectMobileSecurity").publicKey
+                        val keyAdmin = it.data?.get("key").toString()
+                        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+                        cipher.init(Cipher.DECRYPT_MODE, privateKey)
+                        val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))
+
+                        keySpec = SecretKeySpec(
+                            keyAES, "AES"
+                        )
+                }
+            }
+        }
     }
 
     fun encrypt(plain: String?): String? {
-        if (plain == null)
+        if (plain == null || keySpec == null)
             return null
 
         val plainBytes = plain.toByteArray()
@@ -59,7 +86,7 @@ class Encryption {
     }
 
     fun decrypt(encryptedB64: String?): String? {
-        if (encryptedB64 == null)
+        if (encryptedB64 == null || keySpec == null)
             return null
 
         val encryptedBytes = Base64.decode(encryptedB64, Base64.DEFAULT)
