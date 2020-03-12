@@ -53,6 +53,6 @@ class RemoveUsersActivity : AppCompatActivity() {
     private fun fillPending(it: QuerySnapshot, pending: ArrayList<Pending>) {
         for (document in it)
             if ((document.data["status"] == "user" || document.data["status"] == "admin") && document.data["email"].toString() != FirebaseAuth.getInstance().currentUser?.email)
-                pending.add(Pending(document.data["email"] as String, document.data["key"] as String, document.data["status"] as String))
+                pending.add(Pending(document.data["email"] as String, document.data["key"] as String, document.data["sym"] as String, document.data["status"] as String))
     }
 }

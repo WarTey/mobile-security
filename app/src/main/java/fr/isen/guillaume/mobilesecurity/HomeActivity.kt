@@ -16,9 +16,9 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        /*val firebaseUser = FirebaseAuth.getInstance().currentUser
         if (firebaseUser != null && firebaseUser.isEmailVerified && intent.getBooleanExtra("phone", false)) checkPending(FirebaseAuth.getInstance())
-        else goToLogin()
+        else goToLogin()*/
 
         // Encryption init
         Encryption.getInstance()

@@ -5,10 +5,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.security.KeyPairGeneratorSpec
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,30 +25,30 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
-import javax.security.auth.x500.X500Principal
-
 
 class LoginActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        /*val firestore = FirebaseFirestore.getInstance()
-        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
-        val start = Calendar.getInstance()
-        val end = Calendar.getInstance()
-        end.add(Calendar.YEAR, 1)
-        val spec = KeyPairGeneratorSpec.Builder(this).setAlias("ProjectMobileSecurity").setSubject(
-            X500Principal("CN=Sample Name, O=Android Authority")
-        ).setSerialNumber(BigInteger.ONE).setStartDate(start.time).setEndDate(end.time).build()
-        val generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore")
-        generator.initialize(spec)
-        val keyPair = generator.generateKeyPair()
+        /*Log.e("f", "coucou")
 
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
+
+        val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
+        keyPairGenerator.initialize(
+            KeyGenParameterSpec.Builder("ProjectMobileSecurity", KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
+                .setUserAuthenticationRequired(false)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .build())
+        val keyPair = keyPairGenerator.genKeyPair()
 
         val keyGen: KeyGenerator = KeyGenerator.getInstance("AES")
-        keyGen.init(256) // for example
+        keyGen.init(256)
         val secretKey: SecretKey = keyGen.generateKey()
 
         val encryptCipher: Cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
@@ -53,18 +56,25 @@ class LoginActivity : AppCompatActivity() {
 
         val cipherText: ByteArray = encryptCipher.doFinal(secretKey.encoded)
 
-        val firebaseAuth = FirebaseAuth.getInstance()
-        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
-        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Base64.encodeToString(cipherText, Base64.DEFAULT), "admin") }
+        val pendingRef = firestore.collection("pending").document("guillaume.blanc-de-lanaute@isen.yncrea.fr")
+        Log.e("a", keyPair.public.encoded!!.contentToString())
+        Log.e("a", keyPair.public.encoded.size.toString())
+        val test = Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT)
+        Log.e("b", test)
+        Log.e("b", test.length.toString())
+        Log.e("c", Base64.decode(test, Base64.DEFAULT)!!.contentToString())
+        Log.e("c", Base64.decode(test, Base64.DEFAULT)!!.contentToString().length.toString())
+        Log.e("d", Base64.encode(keyPair.public.encoded, Base64.DEFAULT)!!.contentToString())
+        Log.e("d", Base64.encode(keyPair.public.encoded, Base64.DEFAULT).size.toString())
+        val pending = Pending("guillaume.blanc-de-lanaute@isen.yncrea.fr", Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT), Base64.encodeToString(cipherText, Base64.DEFAULT), "admin")
 
-        pending?.let {
-            pendingRef?.set(it)?.addOnSuccessListener {
+        pending.let {
+            pendingRef.set(it).addOnSuccessListener {
                 StyleableToast.makeText(this, getString(R.string.registration_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
-            }?.addOnFailureListener {
+            }.addOnFailureListener {
                 StyleableToast.makeText(this, getString(R.string.registration_not_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
             }
         }*/
-
 
         val firebaseAuth = FirebaseAuth.getInstance()
         if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true && !isEmulator())
@@ -177,7 +187,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goToPhone() {
-        val intentPhone = Intent(this, PhoneVerificationActivity::class.java)
+        //val intentPhone = Intent(this, PhoneVerificationActivity::class.java)
+        val intentPhone = Intent(this, HomeActivity::class.java)
         intentPhone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intentPhone)
         finish()

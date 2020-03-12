@@ -1,10 +1,13 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.security.KeyPairGeneratorSpec
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -13,14 +16,12 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_register.*
-import java.math.BigInteger
 import java.security.KeyPairGenerator
-import java.util.*
 import java.util.regex.Pattern
-import javax.security.auth.x500.X500Principal
 
 class RegisterActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -31,6 +32,7 @@ class RegisterActivity : AppCompatActivity() {
         btnRegister.setOnClickListener { register() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun register() {
         if (isEmail() && isSamePassword() && !isPasswordTooShort() && !txtName.text.isNullOrEmpty()) {
             val firebaseAuth = FirebaseAuth.getInstance()
@@ -86,19 +88,22 @@ class RegisterActivity : AppCompatActivity() {
         StyleableToast.makeText(this, getString(R.string.register_error), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun sendRequest(firebaseAuth: FirebaseAuth) {
         val firestore = FirebaseFirestore.getInstance()
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
-        val start = Calendar.getInstance()
-        val end = Calendar.getInstance()
-        end.add(Calendar.YEAR, 1)
-        val spec = KeyPairGeneratorSpec.Builder(this).setAlias("ProjectMobileSecurity").setSubject(X500Principal("CN=Sample Name, O=Android Authority")).setSerialNumber(BigInteger.ONE).setStartDate(start.time).setEndDate(end.time).build()
-        val generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore")
-        generator.initialize(spec)
-        val keyPair = generator.generateKeyPair()
+
+        val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
+        keyPairGenerator.initialize(
+            KeyGenParameterSpec.Builder("ProjectMobileSecurity", KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
+                .setUserAuthenticationRequired(false)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .build())
+        val keyPair = keyPairGenerator.genKeyPair()
 
         val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
-        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT), "InProgress") }
+        val pending = firebaseAuth.currentUser?.email?.let { Pending(it, Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT), Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT), "InProgress") }
 
         pending?.let {
             pendingRef?.set(it)?.addOnSuccessListener {

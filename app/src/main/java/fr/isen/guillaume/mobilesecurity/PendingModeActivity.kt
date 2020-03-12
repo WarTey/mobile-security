@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.Query
@@ -14,7 +13,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.muddzdev.styleabletoast.StyleableToast
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import fr.isen.guillaume.mobilesecurity.recycler.RecyclerAdapter
-import fr.isen.guillaume.mobilesecurity.tools.Connectivity
 import kotlinx.android.synthetic.main.activity_pending_mode.*
 
 class PendingModeActivity : AppCompatActivity() {
@@ -55,6 +53,6 @@ class PendingModeActivity : AppCompatActivity() {
     private fun fillPending(it: QuerySnapshot, pending: ArrayList<Pending>) {
         for (document in it)
             if (document.data["status"] == "InProgress")
-                pending.add(Pending(document.data["email"] as String, document.data["key"] as String, document.data["status"] as String))
+                pending.add(Pending(document.data["email"] as String, document.data["key"] as String, document.data["sym"] as String, document.data["status"] as String))
     }
 }

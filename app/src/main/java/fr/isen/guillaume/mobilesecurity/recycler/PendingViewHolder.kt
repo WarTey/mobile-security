@@ -46,7 +46,7 @@ class PendingViewHolder(itemView: View, context: Context, pendingMode: Boolean) 
         val firestore = FirebaseFirestore.getInstance()
         val pendingRef = firestore.collection("pending").document(itemView.txtEmail.text.toString())
 
-        pendingRef.update("key", key,"status", type).addOnSuccessListener {
+        pendingRef.update("sym", key,"status", type).addOnSuccessListener {
             StyleableToast.makeText(context, context.getString(R.string.registration_accepted), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
         }.addOnFailureListener {
             StyleableToast.makeText(context, context.getString(R.string.error_registration), Toast.LENGTH_LONG, R.style.StyleToastFail).show()

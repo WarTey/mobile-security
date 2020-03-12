@@ -1,15 +1,17 @@
 package fr.isen.guillaume.mobilesecurity.misc
 
 import android.util.Base64
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.nio.charset.Charset
 import java.security.KeyStore
-import java.security.PrivateKey
-import java.security.PublicKey
+import java.security.SecureRandom
+import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.collections.HashMap
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
@@ -44,20 +46,18 @@ class Encryption {
             if (email != null) {
                 FirebaseFirestore.getInstance().collection("pending").document(email).get().addOnSuccessListener {
 
-                    val keyStore =
-                        KeyStore.getInstance("AndroidKeyStore")
+                    val keyStore = KeyStore.getInstance("AndroidKeyStore")
                     keyStore.load(null)
 
-                    val privateKey: PrivateKey = keyStore.getKey("ProjectMobileSecurity", null) as PrivateKey
-                    val publicKey: PublicKey = keyStore.getCertificate("ProjectMobileSecurity").publicKey
-                        val keyAdmin = it.data?.get("key").toString()
-                        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-                        cipher.init(Cipher.DECRYPT_MODE, privateKey)
-                        val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))
+                    val keys = keyStore.getEntry("ProjectMobileSecurity", null) as KeyStore.PrivateKeyEntry
+                    val keyAdmin = it.data?.get("sym").toString()
+                    val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+                    cipher.init(Cipher.DECRYPT_MODE, keys.privateKey)
+                    Log.e("dd", Base64.decode(keyAdmin, Base64.DEFAULT)!!.contentToString())
+                    Log.e("dd", Base64.decode(keyAdmin, Base64.DEFAULT).size.toString())
+                    val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))
 
-                        keySpec = SecretKeySpec(
-                            keyAES, "AES"
-                        )
+                    keySpec = SecretKeySpec(keyAES, "AES")
                 }
             }
         }
@@ -74,8 +74,7 @@ class Encryption {
         val ivSpec = IvParameterSpec(ByteArray(SIZE))//.also { SecureRandom().nextBytes(it) })
 
         // Chiffrement
-        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
-            .also { it.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec) }
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding").also { it.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec) }
         val encrypted = cipher.doFinal(plainBytes)
 
         // Ajout de l'IV au message

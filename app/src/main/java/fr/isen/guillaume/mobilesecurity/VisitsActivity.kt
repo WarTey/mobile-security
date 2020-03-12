@@ -14,7 +14,6 @@ import com.google.firebase.firestore.Query
 import fr.isen.guillaume.mobilesecurity.misc.Encryption
 import fr.isen.guillaume.mobilesecurity.model.Visit
 import fr.isen.guillaume.mobilesecurity.recycler.VisitsAdapter
-import kotlinx.android.synthetic.main.activity_pending_mode.*
 import kotlinx.android.synthetic.main.activity_visits.*
 
 class VisitsActivity : AppCompatActivity() {
