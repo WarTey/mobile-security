@@ -6,8 +6,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.nio.charset.Charset
 import java.security.KeyStore
-import java.security.SecureRandom
-import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -15,7 +13,6 @@ import kotlin.collections.HashMap
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
-
 
 class Encryption {
 
@@ -53,8 +50,6 @@ class Encryption {
                     val keyAdmin = it.data?.get("sym").toString()
                     val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
                     cipher.init(Cipher.DECRYPT_MODE, keys.privateKey)
-                    Log.e("dd", Base64.decode(keyAdmin, Base64.DEFAULT)!!.contentToString())
-                    Log.e("dd", Base64.decode(keyAdmin, Base64.DEFAULT).size.toString())
                     val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))
 
                     keySpec = SecretKeySpec(keyAES, "AES")
@@ -70,16 +65,11 @@ class Encryption {
         val plainBytes = plain.toByteArray()
 
         // Génération d'un IV
-        // DEBUG salt ?
-        val ivSpec = IvParameterSpec(ByteArray(SIZE))//.also { SecureRandom().nextBytes(it) })
+        val ivSpec = IvParameterSpec(ByteArray(SIZE))
 
         // Chiffrement
         val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding").also { it.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec) }
         val encrypted = cipher.doFinal(plainBytes)
-
-        // Ajout de l'IV au message
-        //val bytes = Arrays.copyOf(ivSpec.iv, SIZE + encrypted.size)
-        //System.arraycopy(encrypted, 0, bytes, SIZE, encrypted.size)
 
         return Base64.encodeToString(encrypted, Base64.DEFAULT)
     }
@@ -91,12 +81,12 @@ class Encryption {
         val encryptedBytes = Base64.decode(encryptedB64, Base64.DEFAULT)
 
         // Récupération de l'IV
-        val ivSpec = IvParameterSpec(ByteArray((SIZE)))//encryptedBytes.copyOfRange(0, SIZE))
+        val ivSpec = IvParameterSpec(ByteArray((SIZE)))
 
         // Déchiffrement
         val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
             .also { it.init(Cipher.DECRYPT_MODE, keySpec, ivSpec) }
-        return cipher.doFinal(encryptedBytes/*.copyOfRange(SIZE, encryptedBytes.size)*/)
+        return cipher.doFinal(encryptedBytes)
             .toString(Charset.defaultCharset())
     }
 

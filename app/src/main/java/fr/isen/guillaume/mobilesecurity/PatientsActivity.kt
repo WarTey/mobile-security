@@ -1,20 +1,30 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import fr.isen.guillaume.mobilesecurity.lib.AntiDebug
+import fr.isen.guillaume.mobilesecurity.lib.Emulator
+import fr.isen.guillaume.mobilesecurity.lib.Monkey
+import fr.isen.guillaume.mobilesecurity.lib.Runtime
 import fr.isen.guillaume.mobilesecurity.misc.Encryption
+import fr.isen.guillaume.mobilesecurity.misc.StartActivity
+import fr.isen.guillaume.mobilesecurity.misc.Verification
 import fr.isen.guillaume.mobilesecurity.model.Patient
 import fr.isen.guillaume.mobilesecurity.recycler.PatientsAdapter
 import kotlinx.android.synthetic.main.activity_patients.*
+import kotlin.system.exitProcess
 
 class PatientsActivity : AppCompatActivity() {
 
@@ -32,9 +42,18 @@ class PatientsActivity : AppCompatActivity() {
         private const val LIMIT_LOAD: Long = 10L
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patients)
+
+        if (Verification().isRooted(this) || Verification().isEmulator() || Runtime().isHooked() || AntiDebug().isDebugged() || Monkey().isUserAMonkey() || Emulator().isQEmuEnvDetected())
+            exitProcess(0)
+
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser != null && firebaseUser.isEmailVerified) Verification().checkPending(
+            FirebaseAuth.getInstance(), this)
+        else StartActivity().goToLogin(this)
 
         crypto = Encryption.getInstance()
 

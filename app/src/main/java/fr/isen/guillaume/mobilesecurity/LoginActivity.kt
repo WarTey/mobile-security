@@ -1,14 +1,9 @@
 package fr.isen.guillaume.mobilesecurity
 
-import android.R.attr.publicKey
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
-import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -17,14 +12,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
-import fr.isen.guillaume.mobilesecurity.model.Pending
+import fr.isen.guillaume.mobilesecurity.lib.AntiDebug
+import fr.isen.guillaume.mobilesecurity.lib.Emulator
+import fr.isen.guillaume.mobilesecurity.lib.Monkey
+import fr.isen.guillaume.mobilesecurity.lib.Runtime
+import fr.isen.guillaume.mobilesecurity.misc.StartActivity
+import fr.isen.guillaume.mobilesecurity.misc.Verification
 import kotlinx.android.synthetic.main.activity_login.*
-import java.math.BigInteger
-import java.security.KeyPairGenerator
-import java.util.*
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
+import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
 
@@ -33,51 +28,11 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        /*Log.e("f", "coucou")
-
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build()
-
-        val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
-        keyPairGenerator.initialize(
-            KeyGenParameterSpec.Builder("ProjectMobileSecurity", KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
-                .setUserAuthenticationRequired(false)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .build())
-        val keyPair = keyPairGenerator.genKeyPair()
-
-        val keyGen: KeyGenerator = KeyGenerator.getInstance("AES")
-        keyGen.init(256)
-        val secretKey: SecretKey = keyGen.generateKey()
-
-        val encryptCipher: Cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        encryptCipher.init(Cipher.ENCRYPT_MODE, keyPair.public)
-
-        val cipherText: ByteArray = encryptCipher.doFinal(secretKey.encoded)
-
-        val pendingRef = firestore.collection("pending").document("guillaume.blanc-de-lanaute@isen.yncrea.fr")
-        Log.e("a", keyPair.public.encoded!!.contentToString())
-        Log.e("a", keyPair.public.encoded.size.toString())
-        val test = Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT)
-        Log.e("b", test)
-        Log.e("b", test.length.toString())
-        Log.e("c", Base64.decode(test, Base64.DEFAULT)!!.contentToString())
-        Log.e("c", Base64.decode(test, Base64.DEFAULT)!!.contentToString().length.toString())
-        Log.e("d", Base64.encode(keyPair.public.encoded, Base64.DEFAULT)!!.contentToString())
-        Log.e("d", Base64.encode(keyPair.public.encoded, Base64.DEFAULT).size.toString())
-        val pending = Pending("guillaume.blanc-de-lanaute@isen.yncrea.fr", Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT), Base64.encodeToString(cipherText, Base64.DEFAULT), "admin")
-
-        pending.let {
-            pendingRef.set(it).addOnSuccessListener {
-                StyleableToast.makeText(this, getString(R.string.registration_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
-            }.addOnFailureListener {
-                StyleableToast.makeText(this, getString(R.string.registration_not_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
-            }
-        }*/
+        if (Verification().isRooted(this) || Verification().isEmulator() || Runtime().isHooked() || AntiDebug().isDebugged() || Monkey().isUserAMonkey() || Emulator().isQEmuEnvDetected())
+            exitProcess(0)
 
         val firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true && !isEmulator())
+        if (firebaseAuth.currentUser != null && firebaseAuth.currentUser?.isEmailVerified == true)
             checkPending(firebaseAuth)
 
         initLayout()
@@ -85,10 +40,6 @@ class LoginActivity : AppCompatActivity() {
         btnNew.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
         btnForget.setOnClickListener { forgetPassword() }
         btnSend.setOnClickListener { login() }
-    }
-
-    private fun isEmulator(): Boolean {
-        return Build.FINGERPRINT.contains("generic")
     }
 
     private fun initLayout() {
@@ -159,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
 
         pendingRef?.get()?.addOnSuccessListener {
             if (it.data?.get("status").toString() != "InProgress")
-                goToPhone()
+                StartActivity().goToPhone(this)
         }
     }
 
@@ -184,13 +135,5 @@ class LoginActivity : AppCompatActivity() {
                     StyleableToast.makeText(this, getString(R.string.incorrect_email), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
             }
         }
-    }
-
-    private fun goToPhone() {
-        //val intentPhone = Intent(this, PhoneVerificationActivity::class.java)
-        val intentPhone = Intent(this, HomeActivity::class.java)
-        intentPhone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentPhone)
-        finish()
     }
 }

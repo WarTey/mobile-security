@@ -21,40 +21,9 @@ class PatientsAdapter(private val items: ArrayList<Patient>, private val context
         return items.size
     }
 
-    fun updateItems(items: ArrayList<Patient>) {
-        this.items.clear()
-        this.items.addAll(items)
-    }
-
-    fun addItem(item: Patient?) {
-        if (item != null)
-            items.add(item)
-    }
-
     fun addItems(items: ArrayList<Patient>) {
         this.items.addAll(items)
     }
-
-    fun changeItem(item: Patient?) {
-        if (item != null) {
-            items.forEachIndexed { index, visit ->
-                if (visit.id == item.id) {
-                    items[index] = item
-                    return
-                }
-            }
-        }
-    }
-
-    fun removeItem(id: String) {
-        items.forEachIndexed { index, visit ->
-            if (visit.id == id) {
-                items.removeAt(index)
-                return
-            }
-        }
-    }
-
 
     // Gestion du recycler view
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -67,10 +36,8 @@ class PatientsAdapter(private val items: ArrayList<Patient>, private val context
         val p = items[position]
 
         holder.reference = p.reference
-
         holder.txtFirstname.text = p.firstname
         holder.txtLastname.text = p.lastname
-
         if (p.picture != null)
             holder.imgPatient.setImageURI(p.picture)
     }

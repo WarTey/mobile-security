@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import fr.isen.guillaume.mobilesecurity.R
 import fr.isen.guillaume.mobilesecurity.model.Pending
-import fr.isen.guillaume.mobilesecurity.recycler.PendingViewHolder
 import java.util.ArrayList
 
 class RecyclerAdapter(private val pending: ArrayList<Pending>, private val context: Context, private val pendingMode: Boolean) : RecyclerView.Adapter<PendingViewHolder>() {

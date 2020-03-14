@@ -32,33 +32,8 @@ class VisitsAdapter(
         this.items.addAll(items)
     }
 
-    fun addItem(item: Visit?) {
-        if (item != null)
-            items.add(item)
-    }
-
     fun addItems(items: ArrayList<Visit>) {
         this.items.addAll(items)
-    }
-
-    fun changeItem(item: Visit?) {
-        if (item != null) {
-            items.forEachIndexed { index, visit ->
-                if (visit.id == item.id) {
-                    items[index] = item
-                    return
-                }
-            }
-        }
-    }
-
-    fun removeItem(id: String) {
-        items.forEachIndexed { index, visit ->
-            if (visit.id == id) {
-                items.removeAt(index)
-                return
-            }
-        }
     }
 
     fun clearItems() {
@@ -83,7 +58,6 @@ class VisitsAdapter(
 
         holder.txtActions.text = p.actions
     }
-
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtDate: TextView = view.txtDate

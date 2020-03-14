@@ -1,11 +1,13 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -13,22 +15,34 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.muddzdev.styleabletoast.StyleableToast
+import fr.isen.guillaume.mobilesecurity.lib.AntiDebug
+import fr.isen.guillaume.mobilesecurity.lib.Emulator
+import fr.isen.guillaume.mobilesecurity.lib.Monkey
+import fr.isen.guillaume.mobilesecurity.lib.Runtime
+import fr.isen.guillaume.mobilesecurity.misc.StartActivity
+import fr.isen.guillaume.mobilesecurity.misc.Verification
 import kotlinx.android.synthetic.main.activity_phone_verification.*
 import kotlinx.android.synthetic.main.activity_phone_verification.btnSend
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import kotlin.system.exitProcess
 
 class PhoneVerificationActivity : AppCompatActivity() {
 
     private var code = "null"
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_phone_verification)
 
+        if (Verification().isRooted(this) || Verification().isEmulator() || Runtime().isHooked() || AntiDebug().isDebugged() || Monkey().isUserAMonkey() || Emulator().isQEmuEnvDetected())
+            exitProcess(0)
+
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser == null || !firebaseUser.isEmailVerified)
-            checkPending(FirebaseAuth.getInstance())
+        if (firebaseUser != null && firebaseUser.isEmailVerified) Verification().checkPending(
+            FirebaseAuth.getInstance(), this)
+        else StartActivity().goToLogin(this)
 
         if (!firebaseUser?.phoneNumber.isNullOrEmpty()) {
             changeDisplay()
@@ -61,7 +75,7 @@ class PhoneVerificationActivity : AppCompatActivity() {
             val phoneAuthCredential = PhoneAuthProvider.getCredential(code, pinView.value)
             FirebaseAuth.getInstance().currentUser?.linkWithCredential(phoneAuthCredential)?.addOnCompleteListener {
                 if (it.isSuccessful)
-                    goToHome()
+                    StartActivity().goToHome(this)
                 else
                     StyleableToast.makeText(this, getString(R.string.code_error), Toast.LENGTH_LONG, R.style.StyleToastFail).show()
             }
@@ -73,7 +87,7 @@ class PhoneVerificationActivity : AppCompatActivity() {
             val phoneNumber = if (firebaseUser?.phoneNumber.isNullOrEmpty()) txtPhone.text.toString() else firebaseUser?.phoneNumber
             PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber.toString(), 60, TimeUnit.SECONDS, this, object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                    goToHome()
+                    StartActivity().goToHome(this@PhoneVerificationActivity)
                 }
 
                 override fun onVerificationFailed(p0: FirebaseException) {
@@ -123,31 +137,6 @@ class PhoneVerificationActivity : AppCompatActivity() {
 
     private fun showPhoneError() {
         inputPhone.error = getString(R.string.not_phone_number)
-    }
-
-    private fun checkPending(firebaseAuth: FirebaseAuth) {
-        val firestore = FirebaseFirestore.getInstance()
-        val pendingRef = firebaseAuth.currentUser?.email?.let { firestore.collection("pending").document(it) }
-
-        pendingRef?.get()?.addOnSuccessListener {
-            if (it.data?.get("status").toString() != "InProgress")
-                goToLogin()
-        }
-    }
-
-    private fun goToLogin() {
-        val intentLogin = Intent(this, LoginActivity::class.java)
-        intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentLogin)
-        finish()
-    }
-
-    private fun goToHome() {
-        val intentHome = Intent(this, HomeActivity::class.java)
-        intentHome.putExtra("phone", true)
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentHome)
-        finish()
     }
 
     companion object {

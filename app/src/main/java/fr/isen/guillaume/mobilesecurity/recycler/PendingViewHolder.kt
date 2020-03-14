@@ -67,7 +67,7 @@ class PendingViewHolder(itemView: View, context: Context, pendingMode: Boolean) 
                     keyStore.load(null)
                     val keyPair = keyStore.getEntry("ProjectMobileSecurity", null) as KeyStore.PrivateKeyEntry
 
-                    val keyAdmin = it.data?.get("key").toString()
+                    val keyAdmin = it.data?.get("sym").toString()
                     val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
                     cipher.init(Cipher.DECRYPT_MODE, keyPair.privateKey)
                     val keyAES = cipher.doFinal(Base64.decode(keyAdmin, Base64.DEFAULT))

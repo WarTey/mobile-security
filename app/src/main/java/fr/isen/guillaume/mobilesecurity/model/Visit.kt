@@ -26,17 +26,4 @@ class Visit() {
         id = pId
         return this
     }
-
-
-    companion object {
-        fun isValid(map: HashMap<String, Comparable<*>?>?): Boolean {
-            if (map == null)
-                return false
-            return checkField(map["millis"]) && checkField(map["actions"])
-        }
-
-        private fun checkField(field: Comparable<*>?): Boolean {
-            return field != null && field != ""
-        }
-    }
 }

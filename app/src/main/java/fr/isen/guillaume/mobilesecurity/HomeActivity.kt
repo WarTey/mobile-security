@@ -1,20 +1,33 @@
 package fr.isen.guillaume.mobilesecurity
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.AnimationUtils
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import fr.isen.guillaume.mobilesecurity.lib.AntiDebug
+import fr.isen.guillaume.mobilesecurity.lib.Emulator
+import fr.isen.guillaume.mobilesecurity.lib.Monkey
+import fr.isen.guillaume.mobilesecurity.lib.Runtime
 import fr.isen.guillaume.mobilesecurity.misc.Encryption
+import fr.isen.guillaume.mobilesecurity.misc.StartActivity
+import fr.isen.guillaume.mobilesecurity.misc.Verification
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlin.system.exitProcess
 
 class HomeActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        if (Verification().isRooted(this) || Verification().isEmulator() || Runtime().isHooked() || AntiDebug().isDebugged() || Monkey().isUserAMonkey() || Emulator().isQEmuEnvDetected())
+            exitProcess(0)
 
         /*val firebaseUser = FirebaseAuth.getInstance().currentUser
         if (firebaseUser != null && firebaseUser.isEmailVerified && intent.getBooleanExtra("phone", false)) checkPending(FirebaseAuth.getInstance())
@@ -49,17 +62,10 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToLogin() {
-        val intentLogin = Intent(this, LoginActivity::class.java)
-        intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentLogin)
-        finish()
-    }
-
     private fun logout() {
         val firebaseAuth = FirebaseAuth.getInstance()
         if (firebaseAuth.currentUser != null)
             firebaseAuth.signOut()
-        goToLogin()
+        StartActivity().goToLogin(this)
     }
 }

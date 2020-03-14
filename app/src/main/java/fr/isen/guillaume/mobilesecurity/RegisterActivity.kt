@@ -1,6 +1,5 @@
 package fr.isen.guillaume.mobilesecurity
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
@@ -14,10 +13,17 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.muddzdev.styleabletoast.StyleableToast
+import fr.isen.guillaume.mobilesecurity.lib.AntiDebug
+import fr.isen.guillaume.mobilesecurity.lib.Emulator
+import fr.isen.guillaume.mobilesecurity.lib.Monkey
+import fr.isen.guillaume.mobilesecurity.lib.Runtime
+import fr.isen.guillaume.mobilesecurity.misc.StartActivity
+import fr.isen.guillaume.mobilesecurity.misc.Verification
 import fr.isen.guillaume.mobilesecurity.model.Pending
 import kotlinx.android.synthetic.main.activity_register.*
 import java.security.KeyPairGenerator
 import java.util.regex.Pattern
+import kotlin.system.exitProcess
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -26,8 +32,11 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        if (Verification().isRooted(this) || Verification().isEmulator() || Runtime().isHooked() || AntiDebug().isDebugged() || Monkey().isUserAMonkey() || Emulator().isQEmuEnvDetected())
+            exitProcess(0)
+
         val firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null) goToLogin()
+        if (firebaseAuth.currentUser != null) StartActivity().goToLogin(this)
 
         btnRegister.setOnClickListener { register() }
     }
@@ -109,18 +118,11 @@ class RegisterActivity : AppCompatActivity() {
             pendingRef?.set(it)?.addOnSuccessListener {
                 StyleableToast.makeText(this, getString(R.string.registration_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
                 firebaseAuth.signOut()
-                goToLogin()
+                StartActivity().goToLogin(this)
             }?.addOnFailureListener {
                 StyleableToast.makeText(this, getString(R.string.registration_not_sent), Toast.LENGTH_LONG, R.style.StyleToastSuccess).show()
             }
         }
-    }
-
-    private fun goToLogin() {
-        val intentLogin = Intent(this, LoginActivity::class.java)
-        intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intentLogin)
-        finish()
     }
 
     companion object {

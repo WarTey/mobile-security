@@ -4,14 +4,11 @@ import android.net.Uri
 
 class Patient() {
     var id: String? = null
-
     var reference: String? = null
     var firstname: String? = null
     var lastname: String? = null
-
     var pathology: String? = null
     var treatment: String? = null
-
     var picture: Uri? = null
 
     constructor(
@@ -35,18 +32,5 @@ class Patient() {
     fun setIdAnd(pId: String): Patient {
         id = pId
         return this
-    }
-
-
-    companion object {
-        fun isValid(map: HashMap<String, Comparable<*>?>?): Boolean {
-            if (map == null)
-                return false
-            return checkField(map["reference"]) && checkField(map["firstname"]) && checkField(map["lastname"])
-        }
-
-        private fun checkField(field: Comparable<*>?): Boolean {
-            return field != null && field != ""
-        }
     }
 }
