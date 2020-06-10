@@ -1,4 +1,4 @@
-# Projet sécurité mobile
+# Projet de sécurité mobile
 
 Projet réalisé par Elio Bilisari, Kelly Boutemeur, Thomas Rigaux, Antoine Viggiano et Guillaume Blanc de Lanaute.
 
